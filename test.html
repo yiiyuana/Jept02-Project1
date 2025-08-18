@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人收支管理小幫手</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="./main.js"></script>
+    
+</head>
+<body>
+    <header>
+        <h1>個人收支管理小幫手</h1>
+        <nav>
+            <button class="tab-button active" data-tab="dashboard">儀表板</button>
+            <button class="tab-button" data-tab="add-transaction">新增交易</button>
+            <button class="tab-button" data-tab="history">交易紀錄</button>
+            <button class="tab-button" data-tab="debt-management">債務管理</button>
+            <a href="#" onclick="alert('登出功能待實作')">登出</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="dashboard" class="tab-content active">
+            <section class="summary-cards">
+                <div class="card assets-card">
+                    <h2>總資產</h2>
+                    <p>NT$ <span id="totalAssets">0</span></p>
+                </div>
+                <div class="card income-card">
+                    <h2>總收入</h2>
+                    <p>NT$ <span id="totalIncome">0</span></p>
+                </div>
+                <div class="card expense-card">
+                    <h2>總支出</h2>
+                    <p>NT$ <span id="totalExpense">0</span></p>
+                </div>
+                <div class="card investment-card">
+                    <h2>總投資</h2>
+                    <p>NT$ <span id="totalInvestment">0</span></p>
+                </div>
+                <div class="card debt-card">
+                    <h2>總債務</h2>
+                    <p>NT$ <span id="totalDebt">0</span></p>
+                </div>
+                <div class="card balance-card">
+                    <h2>結餘</h2>
+                    <p>NT$ <span id="balance">0</span></p>
+                </div>
+            </section>
+
+            <section class="recent-transactions">
+                <h2>近期活動</h2>
+                <div class="transaction-content-container">
+                    <button class="transaction-nav-button" id="prevTransactionContent">&lt;</button>
+                    <div class="transaction-display">
+                        <div id="recentTransactionList" class="active-transaction-content">
+                            <p>目前沒有近期交易。</p>
+                        </div>
+                        <div id="portfolioDetails" class="hidden-transaction-content">
+                            <h3>詳細持股明細 (依投入成本計算)</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>標的名稱</th>
+                                        <th>持有數量</th>
+                                        <th>平均持有成本 (單價)</th>
+                                        <th>總投入成本 (NT$)</th>
+                                        <th>現值 (NT$)</th>
+                                        <th>報酬率</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="portfolioTableBody">
+                                    <tr><td colspan="6">沒有持股數據。</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="upcomingDebtsDetails" class="hidden-transaction-content">
+                            <h3>即將到期債務</h3>
+                            <div id="upcomingDebtsList" class="debt-list">
+                                <p>近期沒有應還債務。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="transaction-nav-button" id="nextTransactionContent">&gt;</button>
+                </div>
+            </section>
+
+            <section class="charts">
+                <h2>財務分析</h2>
+                <div class="chart-container">
+                    <button class="chart-nav-button" id="prevChart">&lt;</button>
+                    <div class="chart-display">
+                        <canvas id="expenseChart" class="active-chart"></canvas>
+                        <canvas id="investmentPortfolioChart" class="hidden-chart"></canvas>
+                    </div>
+                    <button class="chart-nav-button" id="nextChart">&gt;</button>
+                </div>
+            </section>
+        </section>
+
+        <section id="add-transaction" class="tab-content">
+            <section class="transaction-form-section">
+                <h2>新增交易</h2>
+                <form id="addTransactionForm" class="transaction-form">
+                    <div class="form-group">
+                        <label for="type">類型：</label>
+                        <select id="type" name="type" required>
+                            <option value="expense">支出</option>
+                            <option value="income">收入</option>
+                            <option value="investment">投資</option> </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">分類：</label>
+                        <select id="category" name="category" required>
+                            <option value="">請選擇</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">金額：</label>
+                        <input type="number" id="amount" name="amount" min="1" step="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">日期：</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+
+                    <div id="investmentFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="assetName">標的名稱：</label>
+                            <input type="text" id="assetName" name="assetName" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="investmentCurrency">購買幣別：</label>
+                            <select id="investmentCurrency" name="investmentCurrency">
+                                <option value="TWD">台幣 (TWD)</option>
+                                <option value="USD">美金 (USD)</option>
+                                <option value="JPY">日圓 (JPY)</option>
+                                <option value="EUR">歐元 (EUR)</option>
+                                <option value="CNY">人民幣 (CNY)</option>
+                                <option value="BTC">比特幣 (BTC)</option>
+                                <option value="ETH">以太幣 (ETH)</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">購買數量：</label>
+                            <input type="number" id="quantity" name="quantity" min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="purchasePrice">購買價格：<span id="purchasePriceCurrencyDisplay"> (TWD)</span></label>
+                            <input type="number" id="purchasePrice" name="purchasePrice" min="0" step="any">
+                            <small id="currencyExchangeHint" style="display: block; color: #888; margin-top: 5px; display: none;">請將總金額換算為台幣並填寫於上方「金額」欄位。</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">說明 (選填)：</label>
+                        <textarea id="description" name="description" maxlength="100" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="isRecurring" name="isRecurring">
+                        <label for="isRecurring" id="isRecurringLabel">是否為固定收支 (每月自動計算)</label>
+                    </div>
+
+                    <button type="submit">新增</button>
+                </form>
+                <p id="addTransactionMessage" class="message"></p>
+            </section>
+        </section>
+
+        <section id="history" class="tab-content">
+            <section class="filters-section">
+                <h2>篩選交易</h2>
+                <div class="filter-group">
+                    <label for="filterType">篩選類型：</label>
+                    <select id="filterType">
+                        <option value="all">所有</option>
+                        <option value="income">收入</option>
+                        <option value="expense">支出</option>
+                        <option value="investment">投資</option> </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterCategory">篩選分類：</label>
+                    <select id="filterCategory">
+                        <option value="all">所有</option>
+                        </select>
+                </div>
+                <div class="filter-group">
+                    <label for="startDate">起始日期：</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label for="endDate">結束日期：</label>
+                    <input type="date" id="endDate">
+                </div>
+                <button id="applyFilters">套用篩選</button>
+            </section>
+
+            <section class="transaction-history-table">
+                <h2>所有交易</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>類型</th>
+                            <th>分類</th>
+                            <th>說明/標的</th>
+                            <th>數量</th> <th>價格</th> <th>金額</th>
+                            <th>固定/定期？</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTableBody">
+                        </tbody>
+                </table>
+                <p id="noTransactionsMessage" style="display: none;">沒有符合條件的交易記錄。</p>
+            </section>
+        </section>
+
+        <section id="debt-management" class="tab-content">
+            <section class="debt-form-section">
+                <h2>新增債務</h2>
+                <form id="addDebtForm">
+                    <div class="form-group">
+                        <label for="debtName">債務名稱：</label>
+                        <input type="text" id="debtName" name="debtName" required maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="debtOriginalAmount">原始金額：</label>
+                        <input type="number" id="debtOriginalAmount" name="debtOriginalAmount" min="1" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="debtDueDate">下次還款日：</label>
+                        <input type="date" id="debtDueDate" name="debtDueDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="debtFrequency">還款頻率：</label>
+                        <select id="debtFrequency" name="debtFrequency" required>
+                            <option value="monthly">每月</option>
+                            <option value="quarterly">每季</option>
+                            <option value="yearly">每年</option>
+                            <option value="one-time">一次性</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="debtDescription">說明 (選填)：</label>
+                        <textarea id="debtDescription" name="debtDescription" maxlength="100" rows="2"></textarea>
+                    </div>
+                    <button type="submit">新增債務</button>
+                </form>
+                <p id="addDebtMessage" class="message"></p>
+            </section>
+
+            <section class="debt-list-section">
+                <h2>所有債務</h2>
+                <table id="allDebtsTable">
+                    <thead>
+                        <tr>
+                            <th>債務名稱</th>
+                            <th>原始金額</th>
+                            <th>已還金額</th>
+                            <th>尚欠金額</th>
+                            <th>下次還款日</th>
+                            <th>狀態</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allDebtsTableBody">
+                        </tbody>
+                </table>
+                <p id="noDebtsMessage" style="display: none;">目前沒有債務記錄。</p>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 個人收支管理小幫手 - 僅為前端示範</p>
+    </footer>
+
+    <div id="editTransactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>編輯交易</h2>
+            <form id="editTransactionForm" class="transaction-form">
+                <input type="hidden" id="editTransactionId"> <div class="form-group">
+                    <label for="editType">類型：</label>
+                    <select id="editType" name="type" required>
+                        <option value="expense">支出</option>
+                        <option value="income">收入</option>
+                        <option value="investment">投資</option> </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editCategory">分類：</label>
+                    <select id="editCategory" name="category" required>
+                        </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editAmount">金額：</label>
+                    <input type="number" id="editAmount" name="amount" min="1" step="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editDate">日期：</label>
+                    <input type="date" id="editDate" name="date" required>
+                </div>
+
+                <div id="editInvestmentFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="editAssetName">標的名稱：</label>
+                        <input type="text" id="editAssetName" name="assetName" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="editInvestmentCurrency">購買幣別：</label>
+                        <select id="editInvestmentCurrency" name="editInvestmentCurrency">
+                            <option value="TWD">台幣 (TWD)</option>
+                            <option value="USD">美金 (USD)</option>
+                            <option value="JPY">日圓 (JPY)</option>
+                            <option value="EUR">歐元 (EUR)</option>
+                            <option value="CNY">人民幣 (CNY)</option>
+                            <option value="BTC">比特幣 (BTC)</option>
+                            <option value="ETH">以太幣 (ETH)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editQuantity">購買數量：</label>
+                        <input type="number" id="editQuantity" name="quantity" min="0" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPurchasePrice">購買價格：<span id="editPurchasePriceCurrencyDisplay"> (TWD)</span></label>
+                        <input type="number" id="editPurchasePrice" name="purchasePrice" min="0" step="any">
+                        <small id="editCurrencyExchangeHint" style="display: block; color: #888; margin-top: 5px; display: none;">請將總金額換算為台幣並填寫於上方「金額」欄位。</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editDescription">說明 (選填)：</label>
+                    <textarea id="editDescription" name="description" maxlength="100" rows="3"></textarea>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="editIsRecurring" name="isRecurring">
+                    <label for="editIsRecurring" id="editIsRecurringLabel">是否為固定收支 (每月自動計算)</label>
+                </div>
+
+                <button type="submit">儲存變更</button>
+            </form>
+            <p id="editTransactionMessage" class="message"></p>
+        </div>
+    </div>
+
+    <div id="recordPaymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeRecordPaymentModal">&times;</span>
+            <h2>記錄還款</h2>
+            <form id="recordPaymentForm">
+                <input type="hidden" id="recordPaymentDebtId">
+                <div class="form-group">
+                    <label for="paymentAmount">還款金額：</label>
+                    <input type="number" id="paymentAmount" name="paymentAmount" min="1" step="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="paymentDate">還款日期：</label>
+                    <input type="date" id="paymentDate" name="paymentDate" required>
+                </div>
+                <button type="submit">記錄還款</button>
+            </form>
+            <p id="recordPaymentMessage" class="message"></p>
+        </div>
+    </div>
+
+
+    <script>
+        // JavaScript 程式碼
+        
+
+    </script>
+</body>
+</html>
