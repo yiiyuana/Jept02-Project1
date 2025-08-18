@@ -1,0 +1,29 @@
+<%- include('partials/html-head') %> <%- include('partials/html-navbar') %>
+<div class="container mx-auto mt-4">
+  <table class="table table-zebra border border-base-300">
+    <thead class="bg-base-300">
+      <tr>
+        <th>員工編號</th>
+        <th>姓名</th>
+        <th>年齡</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for(let s of sales){ %>
+      <tr>
+        <td><%= s.id %></td>
+        <td><%= s.name %></td>
+        <td><%= s.age %></td>
+      </tr>
+      <% } %> <% for(let i in sales){ %>
+      <tr>
+        <td><%= sales[i].id %></td>
+        <td><%= sales[i].name %></td>
+        <td><%= sales[i].age %></td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/html-scripts') %> <%- include('partials/html-tail') %>

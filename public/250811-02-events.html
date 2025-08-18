@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!--
+  <form name="form1" action="/try-qs" onsubmit="event.preventDefault()">
+  -->
+    <form name="form1" action="/try-qs">
+      <input type="text" placeholder="帳號" name="account" /><br />
+      <input type="password" placeholder="密碼" name="password" /><br />
+      <button type="button" onclick="alert(1)">不是送出的按鈕</button>
+      <input type="submit" value="很重要的送出" />
+    </form>
+
+    <p>
+      <a href="https://tw.yahoo.com" onclick="event.preventDefault()"
+        >yahoo 1</a
+      >
+    </p>
+    <p>
+      <a href="https://tw.yahoo.com" onclick="return false">yahoo 2</a>
+    </p>
+    <p>
+      <a href="https://tw.yahoo.com" onclick="return confirm(`你要去 Yahoo 嗎`)">yahoo 3</a>
+    </p>
+    <script>
+      // JS 功能, 如何在按送出按鈕時, 表單資料不會送出 ??
+      document.form1.onsubmit = function (e) {
+        e.preventDefault(); // 避免預設的行為
+        // TODO: 先檢查欄位裡的資料, 有沒有填寫, 格式對不對
+      };
+    </script>
+  </body>
+</html>

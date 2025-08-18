@@ -1,0 +1,53 @@
+<div class="container mx-auto navbar bg-base-100 shadow-sm">
+  <div class="flex-1">
+    <a href="/" class="btn btn-ghost text-xl"> 我的網站 </a>
+  </div>
+  <div class="flex-none">
+    <ul class="menu menu-horizontal px-1">
+      <li class="mx-2">
+        <a
+          href="/member-list"
+          class="btn btn-sm <%= pageName=='member-list' ? 'btn-active' : '' %>"
+          >會員列表</a
+        >
+      </li>
+      <li class="mx-2">
+        <a
+          href="/address-book"
+          class="btn btn-sm <%= pageName=='ab-list' ? 'btn-active' : '' %>"
+          >通訊錄列表</a
+        >
+      </li>
+      <li class="mx-2">
+        <a
+          href="/address-book/add"
+          class="btn btn-sm <%= pageName=='ab-add' ? 'btn-active' : '' %>"
+          >新增通訊錄</a
+        >
+      </li>
+      <li class="mx-2">
+        <a
+          href="/sales-array"
+          class="btn btn-sm <%= pageName=='sales-array' ? 'btn-active' : '' %>"
+          >sales-array</a
+        >
+      </li>
+      <li class="mx-2">
+        <a
+          href="/colors"
+          class="btn btn-sm <%= pageName=='colors' ? 'btn-active' : '' %>"
+          >colors</a
+        >
+      </li>
+      <li class="mx-2">
+        <a href="/themes/dark" class="btn btn-sm">dark</a>
+      </li>
+      <li class="mx-2">
+        <a href="/themes/retro" class="btn btn-sm">retro</a>
+      </li>
+      <li class="mx-2">
+        <a class="btn btn-sm"><%= session?.member?.nickname %></a>
+      </li>
+    </ul>
+  </div>
+</div>

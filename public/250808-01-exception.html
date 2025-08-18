@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function a() {
+        console.log(`進入 a 函式 ---`);
+        b();
+        console.log(`準備離開 a 函式 ===`);
+      }
+      function b() {
+        console.log(`進入 b 函式 ---`);
+        c();
+        console.log(`準備離開 b 函式 ===`);
+      }
+      function c() {
+        console.log(`進入 c 函式 ---`);
+        // throw new Error("自訂的錯誤");
+        const str = "{},";
+        let data;
+        try {
+          data = JSON.parse(str);
+          // await --------------
+        } catch (ex) {
+          console.warn(ex);
+        }
+        console.log(data);
+        console.log(`準備離開 c 函式 ===`);
+      }
+      a();
+    </script>
+  </body>
+</html>

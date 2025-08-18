@@ -1,0 +1,12 @@
+
+.vscode
+.idea
+
+headers.txt
+package-lock.json
+
+node_modules
+
+public/css/app.css
+public/imgs
+

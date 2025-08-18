@@ -1,0 +1,196 @@
+<%- include('../partials/html-head') %> <%- include('../partials/html-navbar')
+%>
+<style>
+  .form-control.error {
+    border-color: rgb(248 113 113);
+  }
+</style>
+<div class="min-h-screen flex items-center justify-center bg-base-200 px-4">
+  <div class="card w-full max-w-lg bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title text-center text-2xl font-bold mb-6">編輯通訊錄</h2>
+      <form name="form1" novalidate onsubmit="sendData(event)">
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">編號</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            disabled
+            value="<%= ab_id %>"
+          />
+          <div class="text-error text-sm"></div>
+        </div>
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">姓名</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            id="name"
+            name="name"
+            value="<%= name %>"
+            placeholder="請輸入姓名"
+          />
+          <div class="text-error text-sm"></div>
+        </div>
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">電子郵箱</span>
+          </label>
+          <input
+            type="email"
+            class="input input-bordered w-full"
+            id="email"
+            name="email"
+            value="<%= email %>"
+            placeholder="請輸入電子郵箱"
+          />
+          <div class="text-error text-sm"></div>
+        </div>
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">手機</span>
+          </label>
+          <input
+            type="tel"
+            class="input input-bordered w-full"
+            id="mobile"
+            name="mobile"
+            value="<%= mobile %>"
+            placeholder="請輸入手機號碼"
+          />
+          <div class="text-error text-sm"></div>
+        </div>
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">生日</span>
+          </label>
+          <input
+            type="date"
+            class="input input-bordered w-full"
+            id="birthday"
+            name="birthday"
+            value="<%= birthday %>"
+          />
+          <div class="text-error text-sm"></div>
+        </div>
+        <div class="form-control mb-6">
+          <label class="label">
+            <span class="label-text">地址</span>
+          </label>
+          <textarea
+            class="textarea textarea-bordered w-full"
+            id="address"
+            name="address"
+            placeholder="請輸入地址"
+            rows="3"
+          >
+<%= address %></textarea
+          >
+        </div>
+
+        <div class="form-control">
+          <button type="submit" class="btn btn-primary w-full">修改</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<dialog id="successModal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg mb-4">新增結果</h3>
+    <div class="alert alert-success mb-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="stroke-current shrink-0 h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <span>成功新增資料</span>
+    </div>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-secondary mr-2">繼續新增</button>
+        <a href="/address-book" class="btn btn-primary">回列表頁</a>
+      </form>
+    </div>
+  </div>
+</dialog>
+<%- include('../partials/html-scripts') %>
+<script>
+  const modal = document.getElementById("successModal");
+  const nameField = document.form1.name;
+  const emailField = document.form1.email;
+
+  function validateEmail(email) {
+    const re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
+
+  function clearErrors() {
+    document.querySelectorAll(".input, .textarea").forEach((field) => {
+      field.classList.remove("error");
+      field.classList.remove("input-error");
+    });
+    document.querySelectorAll(".text-error").forEach((text) => {
+      text.innerHTML = "";
+      text.style.display = "none";
+    });
+  }
+
+  const sendData = (e) => {
+    // 清除之前的錯誤狀態
+    clearErrors();
+
+    e.preventDefault(); // 不要讓表單送出
+
+    let isPass = true;
+    // TODO: 檢查欄位的資料 (有沒有填寫, 格式)
+    if (nameField.value.length < 2) {
+      isPass = false;
+      nameField.nextElementSibling.innerHTML = "請填入正確的姓名";
+      nameField.classList.add("input-error");
+      nameField.nextElementSibling.style.display = "block";
+    }
+    if (!validateEmail(emailField.value)) {
+      isPass = false;
+      emailField.nextElementSibling.innerHTML = "請填入正確的 Email";
+      emailField.classList.add("input-error");
+      emailField.nextElementSibling.style.display = "block";
+    }
+    if (!isPass) return; // 如果沒通過檢查
+
+    const fd = new FormData(document.form1); // 沒有外觀的表單物件
+
+    fetch("", {
+      method: "POST",
+      body: fd,
+    })
+      .then((r) => r.json())
+      .then((result) => {
+        console.log(result);
+        if (result.success) {
+          // alert('新增成功')
+          modal.showModal();
+        } else {
+          alert(result.error || "沒有成功");
+        }
+      })
+      .catch(console.warn);
+  };
+</script>
+
+<%- include('../partials/html-tail') %>

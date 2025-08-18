@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="retro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <title>daisyUI 範例 a</title>
+  </head>
+  <body>
+    <div class="container mx-auto navbar bg-base-100 shadow-sm">
+      <div class="flex-1">
+        <a href="/" class="btn btn-ghost text-xl"> 我的網站 </a>
+      </div>
+      <div class="flex-none">
+        <ul class="menu menu-horizontal px-1">
+          <li>
+            <a href="/link-1">link-1</a>
+          </li>
+          <li>
+            <a href="/link-2">link-2</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container mx-auto">
+      <div class="">
+        <div class="">
+          <form novalidate class="flex justify-end items-end mt-4">
+            <label class="input pr-2">
+              <svg
+                class="h-[1em] opacity-50"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <g
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  strokeWidth="2.5"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                </g>
+              </svg>
+              <input
+                type="search"
+                name="search"
+                required
+                placeholder="Search"
+              />
+              <button class="btn btn-info btn-xs rounded-full">搜尋</button>
+            </label>
+          </form>
+        </div>
+        <div>
+          <div class="join mt-4">
+            <a class="join-item btn btn-sm"> 1 </a>
+            <span class="join-item btn btn-sm btn-active cursor-default">
+              2
+            </span>
+            <a class="join-item btn btn-sm"> 3 </a>
+          </div>
+        </div>
+        <div class="overflow-x-auto mt-4">
+          <table class="table table-zebra border border-base-300">
+            <thead class="bg-base-300">
+              <tr>
+                <th>#</th>
+                <th>姓名</th>
+                <th>⼿機</th>
+                <th>電郵</th>
+                <th>⽣⽇</th>
+                <th>地址</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{r.ab_id}</td>
+                <td>{r.name}</td>
+                <td>{r.mobile}</td>
+                <td>{r.email}</td>
+                <td>{r.birthday}</td>
+                <td>{r.address}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

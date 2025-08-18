@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // Promise 通常包裝成 function 來使用
+      function myPromise1(n) {
+        const ms = 200 + Math.floor(Math.random() * 500);
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve({ n, ms });
+          }, ms);
+        });
+      }
+
+      // "看起來" 是同步的方式在執行
+      (async () => {
+        for (let i = 0; i < 10; i++) {
+          const r = await myPromise1("A" + i);
+          console.log(r);
+        }
+      })().then(() => {
+        console.log(`A 系列跑完了`);
+      });
+
+      (async () => {
+        for (let i = 0; i < 10; i++) {
+          const r = await myPromise1("B" + i);
+          console.log(r);
+        }
+      })().then(() => {
+        console.log(`B 系列跑完了`);
+      });
+    </script>
+  </body>
+</html>

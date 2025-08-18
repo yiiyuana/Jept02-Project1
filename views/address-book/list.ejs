@@ -1,0 +1,81 @@
+<%- include('../partials/html-head') %> <%- include('../partials/html-navbar')
+%>
+<div class="container mx-auto mt-4">
+  <div class="mb-4">
+    <div class="join mt-4">
+      <a class="join-item btn btn-sm" href="#">
+        <i class="fa-solid fa-angles-left"></i>
+      </a>
+      <a class="join-item btn btn-sm" href="#">
+        <i class="fa-solid fa-angle-left"></i>
+      </a>
+      <% for(let i=page-5; i<=page+5; i++) if(i>=1 && i<= totalPages){ %> <%
+      if(i===page){ %>
+      <span class="join-item btn btn-sm btn-active cursor-default">
+        <%= i %>
+      </span>
+      <% } else { %>
+      <a class="join-item btn btn-sm" href="?page=<%= i %>"> <%= i %> </a>
+      <% } %> <% } %>
+      <a class="join-item btn btn-sm" href="#">
+        <i class="fa-solid fa-angle-right"></i>
+      </a>
+      <a class="join-item btn btn-sm" href="#">
+        <i class="fa-solid fa-angles-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <table class="table table-zebra border border-base-300">
+    <thead class="bg-base-300">
+      <tr>
+        <th><i class="fa-solid fa-trash"></i></th>
+        <th>編號</th>
+        <th>姓名</th>
+        <th>手機</th>
+        <th>電郵</th>
+        <th>生日</th>
+        <th>地址</th>
+        <th><i class="fa-solid fa-pen-to-square"></i></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for(let r of rows){ %>
+      <tr>
+        <td>
+          <!--
+          <a href="/address-book/delete/<%= r.ab_id %>"
+            onclick="return confirm(`是否要刪除編號為 <%= r.ab_id %> 的資料? `)"
+            ><i class="fa-solid fa-trash"></i></a>
+            -->
+          <a href="javascript: delete_item(<%= r.ab_id %>)"
+            ><i class="fa-solid fa-trash"></i
+          ></a>
+        </td>
+        <td><%= r.ab_id %></td>
+        <td><%= r.name %></td>
+        <td><%= r.mobile %></td>
+        <td><%= r.email %></td>
+        <td><%= r.birthday %></td>
+        <td><%= r.address %></td>
+        <td>
+          <a href="/address-book/edit/<%= r.ab_id %>">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </a>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/html-scripts') %>
+<script>
+  const delete_item = (ab_id) => {
+    if (confirm(`是否要刪除編號為 ${ab_id} 的資料?`)) {
+      // JS 跳頁 (轉向)
+      location.href = `/address-book/delete/${ab_id}`;
+    }
+  };
+</script>
+<%- include('../partials/html-tail') %>
