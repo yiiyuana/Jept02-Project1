@@ -1,631 +1,685 @@
 body {
-            font-family: 'Noto Sans TC', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f7f6;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: #4CAF50; /* 綠色系 */
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.8em;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        main {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 20px auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .tab-content {
-            display: none; /* 預設隱藏所有分頁內容 */
-            padding-top: 20px;
-        }
-
-        .tab-content.active {
-            display: block; /* 顯示目前啟用的分頁內容 */
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .tab-button {
-            background-color: transparent;
-            border: none;
-            padding: 12px 20px;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #555;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .tab-button:hover {
-            color: #4CAF50;
-        }
-
-        .tab-button.active {
-            color: #4CAF50;
-            border-bottom-color: #4CAF50;
-        }
-
-        /* 儀表板樣式 */
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* 調整為更緊湊的佈局 */
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .income-card { border-left: 5px solid #66BB6A; } /* 收入綠 */
-        .expense-card { border-left: 5px solid #EF5350; } /* 支出紅 */
-        .balance-card { border-left: 5px solid #29B6F6; } /* 結餘藍 */
-        .investment-card { border-left: 5px solid #ffcc00; } /* 投資黃 */
-        .assets-card { border-left: 5px solid #4CAF50; } /* 資產綠 */
-        .debt-card { border-left: 5px solid #FF5722; } /* 債務橘紅 */
-
-
-        .card h2 {
-            margin-top: 0;
-            color: #555;
-            font-size: 1.2em;
-        }
-
-        .card p {
-            font-size: 2.2em;
-            font-weight: bold;
-            margin: 10px 0 0;
-        }
-
-        .recent-transactions, .charts, .debt-management-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-
-        .transaction-list, .debt-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .transaction-item, .debt-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            background-color: #fcfcfc;
-            border-radius: 5px;
-            border: 1px solid #eee;
-            box-shadow: 0 0 5px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease;
-        }
-        .transaction-item:hover, .debt-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .transaction-item.income span:last-child { color: #28a745; font-weight: bold; }
-        .transaction-item.expense span:last-child { color: #dc3545; font-weight: bold; }
-        .transaction-item.investment span:last-child { color: #e6b800; font-weight: bold; } /* 投資金額顏色 */
-        .transaction-item.recurring { background-color: #fffbe6; border-left: 5px solid #ffcc00; } /* 固定收支的特殊樣式 */
-
-        .transaction-item span:first-child { font-size: 0.9em; color: #777; }
-
-        /* 債務列表樣式 */
-        .debt-item {
-            border-left: 5px solid #FF5722;
-            flex-wrap: wrap; /* 允許換行 */
-        }
-        .debt-item.status-paid {
-            border-left: 5px solid #66BB6A; /* 已清償用綠色 */
-            opacity: 0.7;
-        }
-        .debt-item.status-overdue {
-            border-left: 5px solid #dc3545; /* 逾期用紅色 */
-            background-color: #fce4e4;
-        }
-        .debt-item-info {
-            flex-grow: 1;
-        }
-        .debt-item-info strong {
-            font-size: 1.1em;
-            color: #333;
-        }
-        .debt-item-info span {
-            display: block;
-            font-size: 0.9em;
-            color: #666;
-        }
-        .debt-item-actions {
-            margin-left: 15px;
-            display: flex;
-            gap: 8px;
-        }
-        .debt-item-actions button {
-            padding: 6px 12px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.2s ease;
-        }
-        .debt-item-actions .record-payment-btn { background-color: #007bff; color: white; }
-        .debt-item-actions .record-payment-btn:hover { background-color: #0056b3; }
-        .debt-item-actions .clear-debt-btn { background-color: #28a745; color: white; }
-        .debt-item-actions .clear-debt-btn:hover { background-color: #218838; }
-
-
-        /* 表單樣式 */
-        .transaction-form-section, .debt-form-section {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="number"],
-        .form-group input[type="date"],
-        .form-group select,
-        .form-group textarea {
-            width: calc(100% - 24px); /* 考慮 padding 和 border */
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-
-        .form-group.checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-            margin-bottom: 15px;
-        }
-
-        .form-group.checkbox-group label {
-            margin-bottom: 0;
-            margin-left: 8px;
-            font-weight: normal; /* Checkbox 的標籤不用粗體 */
-            cursor: pointer;
-        }
-        .form-group.checkbox-group input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-            transform: scale(1.2); /* 讓 Checkbox 大一點 */
-            cursor: pointer;
-        }
-
-        button[type="submit"] {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        .message {
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            display: none; /* 預設隱藏 */
-            font-weight: bold;
-        }
-
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        /* 交易紀錄樣式 */
-        .filters-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #eef;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            align-items: flex-end;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1; /* 讓篩選組件可以伸展 */
-            min-width: 180px; /* 最小寬度 */
-        }
-
-        .filter-group label {
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-            font-size: 0.9em;
-        }
-
-        .filters-section input[type="date"],
-        .filters-section select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.95em;
-        }
-
-        #applyFilters {
-            padding: 10px 20px;
-            background-color: #007bff; /* 藍色系 */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            align-self: flex-end; /* 讓按鈕與其他輸入框底部對齊 */
-            min-width: 100px;
-        }
-
-        #applyFilters:hover {
-            background-color: #0056b3;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #eee;
-            padding: 12px 15px;
-            text-align: left;
-            vertical-align: middle;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            color: #555;
-            position: sticky; /* 表頭固定 */
-            top: 0;
-            z-index: 1;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tbody tr:hover {
-            background-color: #eef;
-        }
-
-        .action-buttons button {
-            background-color: #ffc107; /* 黃色 */
-            color: #333;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-            transition: background-color 0.2s ease;
-            font-size: 0.9em;
-        }
-        .action-buttons button.delete-btn {
-            background-color: #dc3545; /* 紅色 */
-            color: white;
-        }
-        .action-buttons button.edit-btn {
-            background-color: #007bff; /* 藍色 */
-            color: white;
-        }
-        .action-buttons button:hover {
-            opacity: 0.9;
-        }
-
-        #noTransactionsMessage, #noDebtsMessage {
-            text-align: center;
-            margin-top: 20px;
-            color: #777;
-            font-style: italic;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            color: #777;
-            font-size: 0.9em;
-            border-top: 1px solid #eee;
-            background-color: #f9f9f9;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
-        }
-
-        /* Modal 彈出視窗樣式 */
-        .modal {
-            display: none; /* 預設隱藏 */
-            position: fixed; /* 固定在視窗上 */
-            z-index: 1000; /* 放在最上層 */
-            left: 0;
-            top: 0;
-            width: 100%; /* 全寬 */
-            height: 100%; /* 全高 */
-            overflow: auto; /* 啟用滾動條 */
-            background-color: rgba(0,0,0,0.4); /* 半透明背景 */
-            padding-top: 60px; /* 從頂部開始顯示內容 */
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; /* 距離頂部和底部，左右自動居中 */
-            padding: 30px;
-            border: 1px solid #888;
-            border-radius: 8px;
-            width: 80%; /* 寬度佔螢幕 80% */
-            max-width: 600px; /* 最大寬度 */
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-            position: relative;
-        }
-
-        .modal-content h2 {
-            margin-top: 0;
-            margin-bottom: 25px;
-            color: #333;
-            text-align: center;
-        }
-
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        /* 讓 Modal 內的表單群組與主頁面一致 */
-        .modal-content .form-group label {
-            font-weight: bold;
-        }
-        .modal-content button[type="submit"] {
-            margin-top: 20px;
-        }
-
-        /* 新增的圖表切換 CSS */
-        .chart-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px; /* 按鈕與圖表間距 */
-            margin-top: 20px;
-            position: relative; /* 為了按鈕定位 */
-        }
-
-        .chart-display {
-            position: relative;
-            width: 100%; /* 確保圖表區塊佔滿可用寬度 */
-            max-width: 600px; /* 或根據您喜歡的寬度 */
-            min-height: 350px; /* 避免圖表切換時高度跳動 */
-            display: flex; /* 讓 canvas 在內部排列 */
-            justify-content: center; /* 讓 canvas 居中 */
-            align-items: center;
-        }
-
-        .chart-display canvas {
-            position: absolute; /* 讓 canvas 堆疊 */
-            max-width: 100%;
-            max-height: 100%;
-            transition: opacity 0.5s ease; /* 淡入淡出效果 */
-        }
-
-        .active-chart {
-            display: block;
-            opacity: 1;
-            z-index: 1; /* 顯示在最上層 */
-        }
-
-        .hidden-chart {
-            display: none; /* 預設隱藏 */
-            opacity: 0;
-            z-index: 0;
-        }
-
-        .chart-nav-button {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 1.5em;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .chart-nav-button:hover {
-            background-color: #e0e0e0;
-            transform: scale(1.05);
-        }
-
-        .chart-nav-button:active {
-            background-color: #d0d0d0;
-            transform: scale(0.95);
-        }
-
-        /* 新增的近期活動內容切換 CSS */
-        .transaction-content-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px; /* 按鈕與內容間距 */
-            margin-top: 20px;
-            position: relative;
-            width: 100%; /* 確保容器佔滿可用寬度 */
-        }
-
-        .transaction-display {
-            position: relative;
-            width: 100%;
-            /* 移除 min-height: 250px; 讓高度隨內容自動調整 */
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* 讓內容靠頂部對齊 */
-            overflow: hidden; /* 防止內容溢出容器 */
-            /* 調整為根據內容自動調整高度 */
-            height: auto;
-            min-height: 150px; /* 設置一個較小的最小高度，以防內容過少導致區塊過小 */
-        }
-
-        .transaction-display > div { /* 針對 recentTransactionList, portfolioDetails, upcomingDebtsDetails */
-            position: relative; /* 從 absolute 改為 relative，以便內容推動父元素高度 */
-            width: 100%;
-            transition: opacity 0.5s ease; /* 淡入淡出效果 */
-            padding: 10px; /* 增加內容內邊距 */
-            box-sizing: border-box; /* 確保 padding 不增加寬度 */
-        }
-
-        .active-transaction-content {
-            display: block;
-            opacity: 1;
-            z-index: 1;
-        }
-
-        .hidden-transaction-content {
-            display: none;
-            opacity: 0;
-            z-index: 0;
-        }
-
-        .transaction-nav-button {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 1.5em;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .transaction-nav-button:hover {
-            background-color: #e0e0e0;
-            transform: scale(1.05);
-        }
-
-        .transaction-nav-button:active {
-            background-color: #d0d0d0;
-            transform: scale(0.95);
-        }
-
-        /* 持股明細表格樣式 */
-        #portfolioDetails table, #allDebtsTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 0.95em;
-        }
-
-        #portfolioDetails th, #portfolioDetails td,
-        #allDebtsTable th, #allDebtsTable td {
-            border: 1px solid #eee;
-            padding: 10px 12px;
-            text-align: left;
-            vertical-align: middle;
-        }
-
-        #portfolioDetails th, #allDebtsTable th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            color: #555;
-        }
-
-        #portfolioDetails tbody tr:nth-child(even), #allDebtsTable tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        #portfolioDetails tbody tr:hover, #allDebtsTable tbody tr:hover {
-            background-color: #eef;
-        }
+  font-family: "Noto Sans TC", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f7f6;
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  background-color: #4caf50; /* 綠色系 */
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8em;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+main {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content {
+  /* display: none;  */
+  /* 預設隱藏所有分頁內容 */
+  padding-top: 20px;
+}
+
+.tab-content.active {
+  display: block; /* 顯示目前啟用的分頁內容 */
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #eee;
+}
+
+.tab-button {
+  background-color: transparent;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #555;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+  color: #4caf50;
+}
+
+.tab-button.active {
+  color: #4caf50;
+  border-bottom-color: #4caf50;
+}
+
+/* 儀表板樣式 */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(220px, 1fr)
+  ); /* 調整為更緊湊的佈局 */
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.income-card {
+  border-left: 5px solid #66bb6a;
+} /* 收入綠 */
+.expense-card {
+  border-left: 5px solid #ef5350;
+} /* 支出紅 */
+.balance-card {
+  border-left: 5px solid #29b6f6;
+} /* 結餘藍 */
+.investment-card {
+  border-left: 5px solid #ffcc00;
+} /* 投資黃 */
+.assets-card {
+  border-left: 5px solid #4caf50;
+} /* 資產綠 */
+.debt-card {
+  border-left: 5px solid #ff5722;
+} /* 債務橘紅 */
+
+.card h2 {
+  margin-top: 0;
+  color: #555;
+  font-size: 1.2em;
+}
+
+.card p {
+  font-size: 2.2em;
+  font-weight: bold;
+  margin: 10px 0 0;
+}
+
+.recent-transactions,
+.charts,
+.debt-management-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.transaction-list,
+.debt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.transaction-item,
+.debt-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #fcfcfc;
+  border-radius: 5px;
+  border: 1px solid #eee;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+.transaction-item:hover,
+.debt-item:hover {
+  transform: translateY(-2px);
+}
+
+.transaction-item.income span:last-child {
+  color: #28a745;
+  font-weight: bold;
+}
+.transaction-item.expense span:last-child {
+  color: #dc3545;
+  font-weight: bold;
+}
+.transaction-item.investment span:last-child {
+  color: #e6b800;
+  font-weight: bold;
+} /* 投資金額顏色 */
+.transaction-item.recurring {
+  background-color: #fffbe6;
+  border-left: 5px solid #ffcc00;
+} /* 固定收支的特殊樣式 */
+
+.transaction-item span:first-child {
+  font-size: 0.9em;
+  color: #777;
+}
+
+/* 債務列表樣式 */
+.debt-item {
+  border-left: 5px solid #ff5722;
+  flex-wrap: wrap; /* 允許換行 */
+}
+.debt-item.status-paid {
+  border-left: 5px solid #66bb6a; /* 已清償用綠色 */
+  opacity: 0.7;
+}
+.debt-item.status-overdue {
+  border-left: 5px solid #dc3545; /* 逾期用紅色 */
+  background-color: #fce4e4;
+}
+.debt-item-info {
+  flex-grow: 1;
+}
+.debt-item-info strong {
+  font-size: 1.1em;
+  color: #333;
+}
+.debt-item-info span {
+  display: block;
+  font-size: 0.9em;
+  color: #666;
+}
+.debt-item-actions {
+  margin-left: 15px;
+  display: flex;
+  gap: 8px;
+}
+.debt-item-actions button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+}
+.debt-item-actions .record-payment-btn {
+  background-color: #007bff;
+  color: white;
+}
+.debt-item-actions .record-payment-btn:hover {
+  background-color: #0056b3;
+}
+.debt-item-actions .clear-debt-btn {
+  background-color: #28a745;
+  color: white;
+}
+.debt-item-actions .clear-debt-btn:hover {
+  background-color: #218838;
+}
+
+/* 表單樣式 */
+.transaction-form-section,
+.debt-form-section {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+  width: calc(100% - 24px); /* 考慮 padding 和 border */
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.form-group.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.form-group.checkbox-group label {
+  margin-bottom: 0;
+  margin-left: 8px;
+  font-weight: normal; /* Checkbox 的標籤不用粗體 */
+  cursor: pointer;
+}
+.form-group.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  transform: scale(1.2); /* 讓 Checkbox 大一點 */
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+.message {
+  text-align: center;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  display: none; /* 預設隱藏 */
+  font-weight: bold;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* 交易紀錄樣式 */
+.filters-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #eef;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* 讓篩選組件可以伸展 */
+  min-width: 180px; /* 最小寬度 */
+}
+
+.filter-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+  font-size: 0.9em;
+}
+
+.filters-section input[type="date"],
+.filters-section select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+#applyFilters {
+  padding: 10px 20px;
+  background-color: #007bff; /* 藍色系 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-end; /* 讓按鈕與其他輸入框底部對齊 */
+  min-width: 100px;
+}
+
+#applyFilters:hover {
+  background-color: #0056b3;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  border: 1px solid #eee;
+  padding: 12px 15px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: #555;
+  position: sticky; /* 表頭固定 */
+  top: 0;
+  z-index: 1;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #eef;
+}
+
+.action-buttons button {
+  background-color: #ffc107; /* 黃色 */
+  color: #333;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: background-color 0.2s ease;
+  font-size: 0.9em;
+}
+.action-buttons button.delete-btn {
+  background-color: #dc3545; /* 紅色 */
+  color: white;
+}
+.action-buttons button.edit-btn {
+  background-color: #007bff; /* 藍色 */
+  color: white;
+}
+.action-buttons button:hover {
+  opacity: 0.9;
+}
+
+#noTransactionsMessage,
+#noDebtsMessage {
+  text-align: center;
+  margin-top: 20px;
+  color: #777;
+  font-style: italic;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+  color: #777;
+  font-size: 0.9em;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Modal 彈出視窗樣式 */
+.modal {
+  display: none; /* 預設隱藏 */
+  position: fixed; /* 固定在視窗上 */
+  z-index: 1000; /* 放在最上層 */
+  left: 0;
+  top: 0;
+  width: 100%; /* 全寬 */
+  height: 100%; /* 全高 */
+  overflow: auto; /* 啟用滾動條 */
+  background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+  padding-top: 60px; /* 從頂部開始顯示內容 */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 距離頂部和底部，左右自動居中 */
+  padding: 30px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 80%; /* 寬度佔螢幕 80% */
+  max-width: 600px; /* 最大寬度 */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position: relative;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #333;
+  text-align: center;
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 讓 Modal 內的表單群組與主頁面一致 */
+.modal-content .form-group label {
+  font-weight: bold;
+}
+.modal-content button[type="submit"] {
+  margin-top: 20px;
+}
+
+/* 新增的圖表切換 CSS */
+.chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* 按鈕與圖表間距 */
+  margin-top: 20px;
+  position: relative; /* 為了按鈕定位 */
+}
+
+.chart-display {
+  position: relative;
+  width: 100%; /* 確保圖表區塊佔滿可用寬度 */
+  max-width: 600px; /* 或根據您喜歡的寬度 */
+  min-height: 350px; /* 避免圖表切換時高度跳動 */
+  display: flex; /* 讓 canvas 在內部排列 */
+  justify-content: center; /* 讓 canvas 居中 */
+  align-items: center;
+}
+
+.chart-display canvas {
+  position: absolute; /* 讓 canvas 堆疊 */
+  max-width: 100%;
+  max-height: 100%;
+  transition: opacity 0.5s ease; /* 淡入淡出效果 */
+}
+
+.active-chart {
+  display: block;
+  opacity: 1;
+  z-index: 1; /* 顯示在最上層 */
+}
+
+.hidden-chart {
+  display: none; /* 預設隱藏 */
+  opacity: 0;
+  z-index: 0;
+}
+
+.chart-nav-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5em;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.chart-nav-button:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.chart-nav-button:active {
+  background-color: #d0d0d0;
+  transform: scale(0.95);
+}
+
+/* 新增的近期活動內容切換 CSS */
+.transaction-content-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* 按鈕與內容間距 */
+  margin-top: 20px;
+  position: relative;
+  width: 100%; /* 確保容器佔滿可用寬度 */
+}
+
+.transaction-display {
+  position: relative;
+  width: 100%;
+  /* 移除 min-height: 250px; 讓高度隨內容自動調整 */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* 讓內容靠頂部對齊 */
+  overflow: hidden; /* 防止內容溢出容器 */
+  /* 調整為根據內容自動調整高度 */
+  height: auto;
+  min-height: 150px; /* 設置一個較小的最小高度，以防內容過少導致區塊過小 */
+}
+
+.transaction-display > div {
+  /* 針對 recentTransactionList, portfolioDetails, upcomingDebtsDetails */
+  position: relative; /* 從 absolute 改為 relative，以便內容推動父元素高度 */
+  width: 100%;
+  transition: opacity 0.5s ease; /* 淡入淡出效果 */
+  padding: 10px; /* 增加內容內邊距 */
+  box-sizing: border-box; /* 確保 padding 不增加寬度 */
+}
+
+.active-transaction-content {
+  display: block;
+  opacity: 1;
+  z-index: 1;
+}
+
+.hidden-transaction-content {
+  display: none;
+  opacity: 0;
+  z-index: 0;
+}
+
+.transaction-nav-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5em;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.transaction-nav-button:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.transaction-nav-button:active {
+  background-color: #d0d0d0;
+  transform: scale(0.95);
+}
+
+/* 持股明細表格樣式 */
+#portfolioDetails table,
+#allDebtsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 0.95em;
+}
+
+#portfolioDetails th,
+#portfolioDetails td,
+#allDebtsTable th,
+#allDebtsTable td {
+  border: 1px solid #eee;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+#portfolioDetails th,
+#allDebtsTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: #555;
+}
+
+#portfolioDetails tbody tr:nth-child(even),
+#allDebtsTable tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#portfolioDetails tbody tr:hover,
+#allDebtsTable tbody tr:hover {
+  background-color: #eef;
+}

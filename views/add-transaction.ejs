@@ -1,0 +1,72 @@
+<section id="add-transaction" class="tab-content active">
+  <section class="transaction-form-section">
+    <h2>新增交易</h2>
+    <form id="addTransactionForm" class="transaction-form">
+      <div class="form-group">
+        <label for="type">類型：</label>
+        <select id="type" name="type" required>
+          <option value="expense">支出</option>
+          <option value="income">收入</option>
+          <option value="investment">投資</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="category">分類：</label>
+        <select id="category" name="category" required>
+          <option value="">請選擇</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="amount">金額：</label>
+        <input
+          type="number"
+          id="amount"
+          name="amount"
+          min="1"
+          step="1"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="date">日期：</label>
+        <input type="date" id="date" name="date" required />
+      </div>
+      <div id="investmentFields" style="display: none">
+        <div class="form-group">
+          <label for="assetName">標的名稱：</label>
+          <input type="text" id="assetName" name="assetName" maxlength="100" />
+        </div>
+        <div class="form-group">
+          <label for="investmentCurrency">購買幣別：</label>
+          <select id="investmentCurrency" name="investmentCurrency">
+            <option value="TWD">台幣 (TWD)</option>
+            <option value="USD">美金 (USD)</option>
+            <option value="JPY">日圓 (JPY)</option>
+            <option value="EUR">歐元 (EUR)</option>
+            <option value="CNY">人民幣 (CNY)</option>
+            <option value="BTC">比特幣 (BTC)</option>
+            <option value="ETH">以太坊 (ETH)</option>
+          </select>
+        </div>
+        <div class="form-group checkbox-group">
+          <input
+            type="checkbox"
+            id="isRegularInvestment"
+            name="isRegularInvestment"
+          />
+          <label for="isRegularInvestment">是否為定期定額</label>
+        </div>
+      </div>
+      <div class="form-group checkbox-group">
+        <input type="checkbox" id="isRecurring" name="isRecurring" />
+        <label for="isRecurring">是否為固定收支 (每月自動計算)</label>
+      </div>
+      <div class="form-group">
+        <label for="description">說明 (選填)：</label>
+        <textarea id="description" name="description" rows="3"></textarea>
+      </div>
+      <button type="submit">新增</button>
+      <p id="addTransactionMessage" class="message"></p>
+    </form>
+  </section>
+</section>

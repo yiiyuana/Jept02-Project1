@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>個人收支管理小幫手</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>個人收支管理小幫手</h1>
+      <nav>
+        <a
+          href="/"
+          class="tab-button <%= pageName === 'dashboard' ? 'active' : '' %>"
+          >儀表板</a
+        >
+        <a
+          href="/add-transaction"
+          class="tab-button <%= pageName === 'add-transaction' ? 'active' : '' %>"
+          >新增交易</a
+        >
+        <a
+          href="/history"
+          class="tab-button <%= pageName === 'history' ? 'active' : '' %>"
+          >交易紀錄</a
+        >
+        <a
+          href="/debt-management"
+          class="tab-button <%= pageName === 'debt-management' ? 'active' : '' %>"
+          >債務管理</a
+        >
+        <a href="#" onclick="alert('登出功能待實作')">登出</a>
+      </nav>
+    </header>
+
+    <main><%- body %></main>
+
+    <script defer src="/main.js"></script>
+  </body>
+</html>

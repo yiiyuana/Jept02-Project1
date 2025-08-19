@@ -1,0 +1,83 @@
+<section id="dashboard" class="tab-content active">
+  <section class="summary-cards">
+    <div class="card assets-card">
+      <h2>總資產</h2>
+      <p>NT$ <span id="totalAssets">0</span></p>
+    </div>
+    <div class="card income-card">
+      <h2>總收入</h2>
+      <p>NT$ <span id="totalIncome">0</span></p>
+    </div>
+    <div class="card expense-card">
+      <h2>總支出</h2>
+      <p>NT$ <span id="totalExpense">0</span></p>
+    </div>
+    <div class="card investment-card">
+      <h2>總投資</h2>
+      <p>NT$ <span id="totalInvestment">0</span></p>
+    </div>
+    <div class="card debt-card">
+      <h2>總債務</h2>
+      <p>NT$ <span id="totalDebt">0</span></p>
+    </div>
+    <div class="card balance-card">
+      <h2>結餘</h2>
+      <p>NT$ <span id="balance">0</span></p>
+    </div>
+  </section>
+
+  <section class="recent-transactions">
+    <h2>近期活動</h2>
+    <div class="transaction-content-container">
+      <button class="transaction-nav-button" id="prevTransactionContent">
+        &lt;
+      </button>
+      <div class="transaction-display">
+        <div id="recentTransactionList" class="active-transaction-content">
+          <p>目前沒有近期交易。</p>
+        </div>
+        <div id="portfolioDetails" class="hidden-transaction-content">
+          <h3>詳細持股明細 (依投入成本計算)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>標的名稱</th>
+                <th>持有數量</th>
+                <th>平均持有成本 (單價)</th>
+                <th>總投入成本 (NT$)</th>
+                <th>現值 (NT$)</th>
+                <th>報酬率</th>
+              </tr>
+            </thead>
+            <tbody id="portfolioTableBody">
+              <tr>
+                <td colspan="6">沒有持股數據。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="upcomingDebtsDetails" class="hidden-transaction-content">
+          <h3>即將到期債務</h3>
+          <div id="upcomingDebtsList" class="debt-list">
+            <p>近期沒有應還債務。</p>
+          </div>
+        </div>
+      </div>
+      <button class="transaction-nav-button" id="nextTransactionContent">
+        &gt;
+      </button>
+    </div>
+  </section>
+
+  <section class="charts">
+    <h2>財務分析</h2>
+    <div class="chart-container">
+      <button class="chart-nav-button" id="prevChart">&lt;</button>
+      <div class="chart-display">
+        <canvas id="expenseChart" class="active-chart"></canvas>
+        <canvas id="investmentPortfolioChart" class="hidden-chart"></canvas>
+      </div>
+      <button class="chart-nav-button" id="nextChart">&gt;</button>
+    </div>
+  </section>
+</section>
