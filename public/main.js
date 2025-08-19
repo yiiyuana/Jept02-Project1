@@ -525,7 +525,7 @@ if (historyPage) {
                 <td>${amountDisplay}</td>
                 <td>${isRecurringDisplay}</td>
                 <td>
-                  <a href="/edit-transaction?id=${t.id}" class="edit-btn">編輯</a>
+                  <button class="edit-btn" data-id="${t.id}">編輯</button>
                   <button class="delete-btn" data-id="${t.id}">刪除</button>
                 </td>
               </tr>
@@ -534,6 +534,15 @@ if (historyPage) {
             .join("");
         }
         tableBody.innerHTML = tableRows;
+
+        // 監聽 edit-btn 的點擊事件
+        document.querySelectorAll(".edit-btn").forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const id = e.target.dataset.id;
+            window.location.href = `/edit-transaction?id=${id}`;
+          });
+        });
+
         document.querySelectorAll(".delete-btn").forEach((button) => {
           button.addEventListener("click", (e) => {
             const id = e.target.dataset.id;
