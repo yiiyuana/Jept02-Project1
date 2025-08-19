@@ -115,9 +115,6 @@ main {
 .assets-card {
   border-left: 5px solid #4caf50;
 } /* 資產綠 */
-.debt-card {
-  border-left: 5px solid #ff5722;
-} /* 債務橘紅 */
 
 .card h2 {
   margin-top: 0;
@@ -132,22 +129,19 @@ main {
 }
 
 .recent-transactions,
-.charts,
-.debt-management-section {
+.charts {
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid #eee;
 }
 
-.transaction-list,
-.debt-list {
+.transaction-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.transaction-item,
-.debt-item {
+.transaction-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -158,8 +152,7 @@ main {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
 }
-.transaction-item:hover,
-.debt-item:hover {
+.transaction-item:hover {
   transform: translateY(-2px);
 }
 
@@ -185,62 +178,8 @@ main {
   color: #777;
 }
 
-/* 債務列表樣式 */
-.debt-item {
-  border-left: 5px solid #ff5722;
-  flex-wrap: wrap; /* 允許換行 */
-}
-.debt-item.status-paid {
-  border-left: 5px solid #66bb6a; /* 已清償用綠色 */
-  opacity: 0.7;
-}
-.debt-item.status-overdue {
-  border-left: 5px solid #dc3545; /* 逾期用紅色 */
-  background-color: #fce4e4;
-}
-.debt-item-info {
-  flex-grow: 1;
-}
-.debt-item-info strong {
-  font-size: 1.1em;
-  color: #333;
-}
-.debt-item-info span {
-  display: block;
-  font-size: 0.9em;
-  color: #666;
-}
-.debt-item-actions {
-  margin-left: 15px;
-  display: flex;
-  gap: 8px;
-}
-.debt-item-actions button {
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.2s ease;
-}
-.debt-item-actions .record-payment-btn {
-  background-color: #007bff;
-  color: white;
-}
-.debt-item-actions .record-payment-btn:hover {
-  background-color: #0056b3;
-}
-.debt-item-actions .clear-debt-btn {
-  background-color: #28a745;
-  color: white;
-}
-.debt-item-actions .clear-debt-btn:hover {
-  background-color: #218838;
-}
-
 /* 表單樣式 */
-.transaction-form-section,
-.debt-form-section {
+.transaction-form-section {
   max-width: 600px;
   margin: 0 auto;
   padding: 30px;
@@ -435,8 +374,7 @@ tbody tr:hover {
   opacity: 0.9;
 }
 
-#noTransactionsMessage,
-#noDebtsMessage {
+#noTransactionsMessage {
   text-align: center;
   margin-top: 20px;
   color: #777;
@@ -649,8 +587,7 @@ footer {
 }
 
 /* 持股明細表格樣式 */
-#portfolioDetails table,
-#allDebtsTable {
+#portfolioDetails table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
@@ -658,28 +595,23 @@ footer {
 }
 
 #portfolioDetails th,
-#portfolioDetails td,
-#allDebtsTable th,
-#allDebtsTable td {
+#portfolioDetails td {
   border: 1px solid #eee;
   padding: 10px 12px;
   text-align: left;
   vertical-align: middle;
 }
 
-#portfolioDetails th,
-#allDebtsTable th {
+#portfolioDetails th {
   background-color: #f2f2f2;
   font-weight: bold;
   color: #555;
 }
 
-#portfolioDetails tbody tr:nth-child(even),
-#allDebtsTable tbody tr:nth-child(even) {
+#portfolioDetails tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-#portfolioDetails tbody tr:hover,
-#allDebtsTable tbody tr:hover {
+#portfolioDetails tbody tr:hover {
   background-color: #eef;
 }

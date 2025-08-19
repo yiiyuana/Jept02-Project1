@@ -18,13 +18,11 @@ const totalAssetsEl = document.getElementById("totalAssets");
 const totalIncomeEl = document.getElementById("totalIncome");
 const totalExpenseEl = document.getElementById("totalExpense");
 const totalInvestmentEl = document.getElementById("totalInvestment");
-const totalDebtEl = document.getElementById("totalDebt");
 const balanceEl = document.getElementById("balance");
 const recentTransactionListEl = document.getElementById(
   "recentTransactionList"
 );
 const portfolioTableBodyEl = document.getElementById("portfolioTableBody");
-const upcomingDebtsListEl = document.getElementById("upcomingDebtsList");
 const charts = document.querySelectorAll(".chart-display canvas");
 const prevChartBtn = document.getElementById("prevChart");
 const nextChartBtn = document.getElementById("nextChart");
@@ -143,7 +141,6 @@ async function renderDashboard() {
       if (totalInvestmentEl)
         totalInvestmentEl.textContent = totalInvestment.toLocaleString();
       if (balanceEl) balanceEl.textContent = balance.toLocaleString();
-      if (totalDebtEl) totalDebtEl.textContent = totalDebt.toLocaleString();
       renderRecentTransactions(transactions);
       renderInvestmentPortfolioTable(transactions);
       if (document.getElementById("expenseChart")) {

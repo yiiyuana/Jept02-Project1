@@ -1,4 +1,4 @@
-// index.js (完整且修正後的版本)
+// index.js (移除負債管理功能後的版本)
 import express from "express";
 import "dotenv/config";
 import db from "./utils/connect-mysql.js";
@@ -50,16 +50,10 @@ app.get("/add-transaction", async (req, res) => {
   res.render("add-transaction", { title: "新增交易" });
 });
 
-// 交易記錄頁面 (已修正)
+// 交易記錄頁面
 app.get("/history", async (req, res) => {
   res.locals.pageName = "history";
   res.render("history", { title: "交易記錄" });
-});
-
-// 債務管理頁面
-app.get("/debt-management", async (req, res) => {
-  res.locals.pageName = "debt-management";
-  res.render("debt-management", { title: "債務管理" });
 });
 
 // API 路由 - 取得儀表板數據
@@ -76,7 +70,7 @@ app.get("/api/dashboard", async (req, res) => {
   }
 });
 
-// API 路由 - 新增交易 (已修正邏輯)
+// API 路由 - 新增交易
 app.post("/api/transactions", async (req, res) => {
   const {
     type,
@@ -112,21 +106,6 @@ app.post("/api/transactions", async (req, res) => {
     res.json({ success: false, error: "交易新增失敗。" });
   }
 });
-
-// API 路由 - 債務管理 (待實作)
-app.get("/api/debts", async (req, res) => {
-  res.json({ success: true, data: [] });
-});
-
-app.post("/api/debts", async (req, res) => {
-  res.json({ success: true });
-});
-
-// 其他可能存在的路由 (如果您的專案中有的話)
-// app.use("/admin2", admin2Router);
-// app.use("/ab", abRouter);
-
-// 其他您專案中可能存在的路由，請自行保留
 
 // 404 頁面處理
 app.use((req, res) => {
