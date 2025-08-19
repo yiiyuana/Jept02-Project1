@@ -359,65 +359,64 @@ if (addTransactionForm) {
 
 async function renderHistoryPage() {
   const tableBody = document.getElementById("transactionTableBody");
-  // 新增除錯訊息
-  console.log("尋找 transactionTableBody...");
   if (!tableBody) {
     console.error(
       "錯誤：未找到 transactionTableBody 元素！請檢查您的 history.ejs 檔案。"
     );
     return;
   }
-  console.log("成功找到 transactionTableBody。");
-  console.log("tableBody 的標籤名稱：", tableBody.tagName);
-  if (tableBody.parentNode) {
-    console.log("tableBody 的父元素標籤名稱：", tableBody.parentNode.tagName);
-  } else {
-    console.log("tableBody 沒有父元素。");
-  }
 
-  console.log("正在嘗試從後端獲取歷史交易資料...");
   try {
     const response = await fetch("/api/dashboard");
-    console.log("後端回應狀態：", response.status);
     const result = await response.json();
-    console.log("從後端取得的資料：", result);
     if (result.success) {
       const transactions = result.data.transactions;
-      console.log("成功獲取到交易資料筆數：", transactions.length);
       let tableRows = "";
       if (transactions.length === 0) {
-        tableRows = '<tr><td colspan="6">目前沒有任何交易紀錄。</td></tr>';
+        tableRows = '<tr><td colspan="9">目前沒有任何交易紀錄。</td></tr>';
       } else {
         tableRows = transactions
           .map((t) => {
-            const amountDisplay =
-              t.type === "expense"
-                ? `-${t.amount.toLocaleString()}`
-                : `+${t.amount.toLocaleString()}`;
-            // 修正：檢查 investment_details 是否為物件
-            let details = null;
+            // 處理金額、說明/標的、數量、價格、是否固定等顯示內容
+            let amountDisplay = `NT$${t.amount.toLocaleString()}`;
+            let categoryDisplay = t.category || "";
+            let descriptionDisplay = t.description || "";
+            let quantityDisplay = "";
+            let priceDisplay = "";
+            let isRecurringDisplay = t.isRecurring ? "是" : "否";
+
             if (t.type === "investment") {
               try {
-                details =
-                  typeof t.investment_details === "string"
-                    ? JSON.parse(t.investment_details)
-                    : t.investment_details;
+                const details = t.investment_details
+                  ? JSON.parse(t.investment_details)
+                  : {};
+
+                // 更新投資交易的顯示內容
+                categoryDisplay = details.category || "投資";
+                descriptionDisplay = details.assetName || "";
+                quantityDisplay = details.quantity
+                  ? details.quantity.toLocaleString()
+                  : "";
+                priceDisplay = details.price
+                  ? details.price.toLocaleString()
+                  : "";
               } catch (e) {
                 console.error("解析 investment_details 失敗:", e);
               }
+            } else if (t.type === "expense") {
+              amountDisplay = `-NT$${t.amount.toLocaleString()}`;
             }
-            const categoryDisplay =
-              t.type === "investment"
-                ? details?.category || "投資"
-                : t.category || "";
 
             return `
               <tr>
                 <td>${t.date}</td>
                 <td>${t.type}</td>
                 <td>${categoryDisplay}</td>
+                <td>${descriptionDisplay}</td>
+                <td>${quantityDisplay}</td>
+                <td>${priceDisplay}</td>
                 <td>${amountDisplay}</td>
-                <td>${t.description || ""}</td>
+                <td>${isRecurringDisplay}</td>
                 <td>
                   <button class="edit-btn" data-id="${t.id}">編輯</button>
                   <button class="delete-btn" data-id="${t.id}">刪除</button>
@@ -427,20 +426,14 @@ async function renderHistoryPage() {
           })
           .join("");
       }
-      console.log("生成的 HTML 字串:", tableRows);
       tableBody.innerHTML = tableRows;
-      // 再次確認渲染後的效果
-      console.log(
-        "innerHTML 內容更新完成。新內容為：",
-        tableBody.innerHTML.trim().substring(0, 100) + "..."
-      );
     } else {
       console.error("Failed to fetch history data:", result.error);
-      tableBody.innerHTML = '<tr><td colspan="6">載入交易紀錄失敗。</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="9">載入交易紀錄失敗。</td></tr>';
     }
   } catch (ex) {
     console.error("Error fetching history data:", ex);
-    tableBody.innerHTML = '<tr><td colspan="6">載入交易紀錄失敗。</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="9">載入交易紀錄失敗。</td></tr>';
   }
 }
 
