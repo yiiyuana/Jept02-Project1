@@ -45,7 +45,7 @@ main {
 }
 
 .tab-content {
-  /* display: none;  */
+  /* display: none; */
   /* 預設隱藏所有分頁內容 */
   padding-top: 20px;
 }
@@ -351,28 +351,39 @@ tbody tr:hover {
   background-color: #eef;
 }
 
-.action-buttons button {
-  background-color: #ffc107; /* 黃色 */
-  color: #333;
+/* =======================================
+   === 已修正: 刪除無效的 .action-buttons 父層選擇器 ===
+   ======================================= */
+/* 歷史記錄頁面按鈕樣式 */
+.edit-btn,
+.delete-btn {
+  padding: 8px 12px;
   border: none;
-  padding: 6px 10px;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
-  margin-right: 5px;
-  transition: background-color 0.2s ease;
   font-size: 0.9em;
-}
-.action-buttons button.delete-btn {
-  background-color: #dc3545; /* 紅色 */
   color: white;
+  margin-right: 5px;
+  transition: background-color 0.3s ease;
 }
-.action-buttons button.edit-btn {
-  background-color: #007bff; /* 藍色 */
-  color: white;
+
+.edit-btn {
+  background-color: #4c8eaf; /* 綠色 */
 }
-.action-buttons button:hover {
-  opacity: 0.9;
+
+.edit-btn:hover {
+  background-color: #4c8eaf /* 滑鼠移入時的綠色 */
 }
+
+.delete-btn {
+  background-color: #f44336; /* 紅色 */
+}
+
+.delete-btn:hover {
+  background-color: #e53935; /* 滑鼠移入時的紅色 */
+}
+
+
 
 #noTransactionsMessage {
   text-align: center;
@@ -403,26 +414,31 @@ footer {
   height: 100%; /* 全高 */
   overflow: auto; /* 啟用滾動條 */
   background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
-  padding-top: 60px; /* 從頂部開始顯示內容 */
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 5% auto; /* 距離頂部和底部，左右自動居中 */
   padding: 30px;
-  border: 1px solid #888;
-  border-radius: 8px;
-  width: 80%; /* 寬度佔螢幕 80% */
-  max-width: 600px; /* 最大寬度 */
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
 }
 
-.modal-content h2 {
-  margin-top: 0;
-  margin-bottom: 25px;
-  color: #333;
-  text-align: center;
+@keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
 }
 
 .close-button {
@@ -442,12 +458,99 @@ footer {
   cursor: pointer;
 }
 
-/* 讓 Modal 內的表單群組與主頁面一致 */
-.modal-content .form-group label {
+#editModal h2 {
+  margin-top: 0;
+  color: #4c8eaf;
+  border-bottom: 2px solid #4c8eaf;
+  padding-bottom: 10px;
+}
+
+#editModal .form-group {
+  margin-bottom: 15px;
+}
+
+#editModal label {
+  display: block;
+  margin-bottom: 5px;
   font-weight: bold;
 }
-.modal-content button[type="submit"] {
+
+#editModal input[type="text"],
+#editModal input[type="number"],
+#editModal input[type="date"],
+#editModal select,
+#editModal textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#editModal textarea {
+  resize: vertical;
+}
+
+#editModal .button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
   margin-top: 20px;
+}
+
+#editModal .button-group button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  color: white;
+}
+
+#editModal .submit-button {
+  background-color: #4c8eaf;
+}
+
+#editModal .cancel-button {
+  background-color: #f44336;
+}
+
+#editModal .submit-button:hover {
+  background-color: #4c8eaf;
+}
+
+#editModal .cancel-button:hover {
+  background-color: #e53935;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 15px;
+  display: none;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.form-group.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-group.investment-quantity-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 /* 新增的圖表切換 CSS */

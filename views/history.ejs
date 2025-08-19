@@ -49,4 +49,111 @@
       沒有符合條件的交易記錄。
     </p>
   </section>
+
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2 id="modalTitle">編輯交易</h2>
+      <form id="editTransactionForm" class="transaction-form">
+        <input type="hidden" id="editTransactionId" />
+        <div class="form-group">
+          <label for="editType">類型：</label>
+          <select id="editType" name="type" required disabled>
+            <option value="expense">支出</option>
+            <option value="income">收入</option>
+            <option value="investment">投資</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editCategory">分類：</label>
+          <select id="editCategory" name="category" required></select>
+        </div>
+        <div class="form-group">
+          <label for="editAmount">金額：</label>
+          <input
+            type="number"
+            id="editAmount"
+            name="amount"
+            min="1"
+            step="1"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="editDate">日期：</label>
+          <input type="date" id="editDate" name="date" required />
+        </div>
+        <div id="editInvestmentFields" style="display: none">
+          <div class="form-group">
+            <label for="editAssetName">標的名稱：</label>
+            <input
+              type="text"
+              id="editAssetName"
+              name="assetName"
+              maxlength="100"
+            />
+          </div>
+          <div class="form-group">
+            <label for="editInvestmentCurrency">購買幣別：</label>
+            <select
+              id="editInvestmentCurrency"
+              name="investmentCurrency"
+              disabled
+            >
+              <option value="TWD">台幣 (TWD)</option>
+              <option value="USD">美金 (USD)</option>
+              <option value="JPY">日圓 (JPY)</option>
+              <option value="EUR">歐元 (EUR)</option>
+              <option value="CNY">人民幣 (CNY)</option>
+              <option value="BTC">比特幣 (BTC)</option>
+              <option value="ETH">以太坊 (ETH)</option>
+            </select>
+          </div>
+          <div class="form-group checkbox-group">
+            <input
+              type="checkbox"
+              id="editIsRegularInvestment"
+              name="isRegularInvestment"
+            />
+            <label for="editIsRegularInvestment">是否為定期定額</label>
+          </div>
+          <div class="form-group investment-quantity-price">
+            <label for="editQuantity">數量 (選填)：</label>
+            <input
+              type="number"
+              id="editQuantity"
+              name="quantity"
+              step="any"
+              min="0"
+            />
+            <label for="editPrice">單價 (選填)：</label>
+            <input
+              type="number"
+              id="editPrice"
+              name="price"
+              step="any"
+              min="0"
+            />
+          </div>
+        </div>
+        <div class="form-group checkbox-group">
+          <input
+            type="checkbox"
+            id="editIsRecurring"
+            name="isRecurring"
+          />
+          <label for="editIsRecurring">是否為固定收支</label>
+        </div>
+        <div class="form-group">
+          <label for="editDescription">說明 (選填)：</label>
+          <textarea id="editDescription" name="description"></textarea>
+        </div>
+        <div class="button-group">
+          <button type="submit" class="submit-button">儲存</button>
+          <button type="button" class="cancel-button">取消</button>
+        </div>
+      </form>
+      <div id="editModalMessage" class="message"></div>
+    </div>
+  </div>
 </section>
