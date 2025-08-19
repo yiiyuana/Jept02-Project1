@@ -1,51 +1,52 @@
 <section id="history" class="tab-content">
-    <section class="filters-section">
-        <h2>篩選交易</h2>
-        <div class="filter-group">
-            <label for="filterType">篩選類型：</label>
-            <select id="filterType">
-                <option value="all">所有</option>
-                <option value="income">收入</option>
-                <option value="expense">支出</option>
-                <option value="investment">投資</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label for="filterCategory">篩選分類：</label>
-            <select id="filterCategory">
-                <option value="all">所有</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label for="startDate">起始日期：</label>
-            <input type="date" id="startDate">
-        </div>
-        <div class="filter-group">
-            <label for="endDate">結束日期：</label>
-            <input type="date" id="endDate">
-        </div>
-        <button id="applyFilters">套用篩選</button>
-    </section>
+  <section class="filters-section">
+    <h2>篩選交易</h2>
+    <div class="filter-group">
+      <label for="filterType">篩選類型：</label>
+      <select id="filterType">
+        <option value="all">所有</option>
+        <option value="income">收入</option>
+        <option value="expense">支出</option>
+        <option value="investment">投資</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filterCategory">篩選分類：</label>
+      <select id="filterCategory">
+        <option value="all">所有</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="startDate">起始日期：</label>
+      <input type="date" id="startDate" />
+    </div>
+    <div class="filter-group">
+      <label for="endDate">結束日期：</label>
+      <input type="date" id="endDate" />
+    </div>
+    <button id="applyFilters">套用篩選</button>
+  </section>
 
-    <section class="transaction-history-table">
-        <h2>所有交易</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>日期</th>
-                    <th>類型</th>
-                    <th>分類</th>
-                    <th>說明/標的</th>
-                    <th>數量</th>
-                    <th>價格</th>
-                    <th>金額</th>
-                    <th>固定/定期？</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="transactionTableBody">
-            </tbody>
-        </table>
-        <p id="noTransactionsMessage" style="display: none;">沒有符合條件的交易記錄。</p>
-    </section>
+  <section class="transaction-history-table">
+    <h2>所有交易</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>日期</th>
+          <th>類型</th>
+          <th>分類</th>
+          <th>說明/標的</th>
+          <th>數量</th>
+          <th>價格</th>
+          <th>金額</th>
+          <th>固定/定期？</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="transactionTableBody"></tbody>
+    </table>
+    <p id="noTransactionsMessage" style="display: none">
+      沒有符合條件的交易記錄。
+    </p>
+  </section>
 </section>

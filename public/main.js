@@ -32,6 +32,11 @@ const transactionContents = document.querySelectorAll(
   ".transaction-display > div"
 );
 let currentTransactionContentIndex = 0;
+const historyTableBodyEl = document.getElementById("transactionTableBody");
+const historyPage = document.getElementById("history");
+const noTransactionsMessageEl = document.getElementById(
+  "noTransactionsMessage"
+);
 
 function switchTransactionContent(direction) {
   if (!transactionContents.length) return;
@@ -133,16 +138,16 @@ async function renderDashboard() {
       });
       totalAssets += balance;
       if (totalAssetsEl)
-        totalAssetsEl.textContent = totalAssets.toLocaleString();
+        totalAssetsEl.textContent = formatCurrency(totalAssets);
       if (totalIncomeEl)
-        totalIncomeEl.textContent = totalIncome.toLocaleString();
+        totalIncomeEl.textContent = formatCurrency(totalIncome);
       if (totalExpenseEl)
-        totalExpenseEl.textContent = totalExpense.toLocaleString();
+        totalExpenseEl.textContent = formatCurrency(totalExpense);
       if (totalInvestmentEl)
-        totalInvestmentEl.textContent = totalInvestment.toLocaleString();
-      if (balanceEl) balanceEl.textContent = balance.toLocaleString();
+        totalInvestmentEl.textContent = formatCurrency(totalInvestment);
+      if (balanceEl) balanceEl.textContent = formatCurrency(balance);
       renderRecentTransactions(transactions);
-      renderInvestmentPortfolioTable(transactions);
+      renderInvestmentPortfolioTable(investmentPortfolio);
       if (document.getElementById("expenseChart")) {
         renderExpenseChart(expenseData);
         renderInvestmentPortfolioChart(investmentPortfolio);
@@ -168,44 +173,35 @@ function renderRecentTransactions(transactions) {
           ? `-${t.amount.toLocaleString()}`
           : `+${t.amount.toLocaleString()}`;
       return `
-            <div class="transaction-item">
-                <span>${t.date}</span>
-                <span>${t.category}</span>
-                <span class="${t.type}">${amountDisplay}</span>
-                <span>${t.description || ""}</span>
-            </div>
-        `;
+ <div class="transaction-item">
+ <span>${t.date}</span>
+ <span>${t.category}</span>
+ <span class="${t.type}">${amountDisplay}</span>
+ <span>${t.description || ""}</span>
+ </div>
+ `;
     })
     .join("");
   recentTransactionListEl.innerHTML = recentList;
 }
-
-function renderInvestmentPortfolioTable(transactions) {
+function renderInvestmentPortfolioTable(portfolio) {
   if (!portfolioTableBodyEl) return;
-  const investmentTransactions = transactions.filter(
-    (t) => t.type === "investment"
-  );
-  if (investmentTransactions.length === 0) {
-    portfolioTableBodyEl.innerHTML =
-      '<tr><td colspan="4">目前沒有投資交易</td></tr>';
+  const portfolioAssets = Object.keys(portfolio);
+  if (portfolioAssets.length === 0) {
+    portfolioTableBodyEl.innerHTML = '<tr><td colspan="4">目前沒有投資交易</td></tr>';
     return;
   }
-  const tableRows = investmentTransactions
-    .map((t) => {
-      let details =
-        typeof t.investment_details === "string"
-          ? JSON.parse(t.investment_details)
-          : t.investment_details;
-      const assetName = details?.assetName || "未知標的";
-      const amount = parseFloat(t.amount);
+  const tableRows = portfolioAssets
+    .map((assetName) => {
+      const amount = portfolio[assetName];
       return `
-            <tr>
-                <td>${t.date}</td>
-                <td>${assetName}</td>
-                <td>${amount.toLocaleString()}</td>
-                <td>${t.description || ""}</td>
-            </tr>
-        `;
+ <tr>
+ <td>${assetName}</td>
+ <td>${amount.toLocaleString()}</td>
+ <td></td>
+ <td></td>
+ </tr>
+ `;
     })
     .join("");
   portfolioTableBodyEl.innerHTML = tableRows;
@@ -239,16 +235,19 @@ function renderExpenseChart(data) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: "top" },
-        title: { display: true, text: "支出類別分佈" },
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "支出類別分佈",
+        },
       },
     },
   });
 }
 function renderInvestmentPortfolioChart(data) {
-  const ctx = document
-    .getElementById("investmentPortfolioChart")
-    .getContext("2d");
+  const ctx = document.getElementById("investmentPortfolioChart").getContext("2d");
   if (investmentPortfolioChartInstance) {
     investmentPortfolioChartInstance.destroy();
   }
@@ -276,11 +275,26 @@ function renderInvestmentPortfolioChart(data) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: "top" },
-        title: { display: true, text: "投資組合分佈" },
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "投資組合分佈",
+        },
       },
+      // 已移除長條圖的 scales 選項
     },
   });
+}
+if (document.getElementById("dashboard")) {
+  if (totalAssetsEl) {
+    renderDashboard();
+  }
+  if (prevChartBtn && nextChartBtn) {
+    prevChartBtn.addEventListener("click", () => switchChart(-1));
+    nextChartBtn.addEventListener("click", () => switchChart(1));
+  }
 }
 function switchChart(direction) {
   if (!charts.length) return;
@@ -295,121 +309,214 @@ function switchChart(direction) {
   charts[currentChartIndex].classList.remove("hidden-chart");
   charts[currentChartIndex].classList.add("active-chart");
 }
-if (prevChartBtn && nextChartBtn) {
-  prevChartBtn.addEventListener("click", () => switchChart(-1));
-  nextChartBtn.addEventListener("click", () => switchChart(1));
-}
 if (addTransactionForm) {
-  updateCategoryOptions();
   typeSelect.addEventListener("change", updateCategoryOptions);
+  updateCategoryOptions();
   addTransactionForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(addTransactionForm);
-    const data = Object.fromEntries(formData.entries());
+    const data = {
+      type: formData.get("type"),
+      category: formData.get("category"),
+      amount: formData.get("amount"),
+      date: formData.get("date"),
+      description: formData.get("description"),
+      isRecurring: formData.get("isRecurring") === "on",
+    };
     if (data.type === "investment") {
-      const investmentDetails = {
-        category: categorySelect.value,
-        assetName: data.assetName,
-        investmentCurrency: data.investmentCurrency,
-        isRegularInvestment: data.isRegularInvestment === "on",
+      data.investmentDetails = {
+        assetName: formData.get("assetName"),
+        investmentCurrency: formData.get("investmentCurrency"),
+        quantity: formData.get("quantity"),
+        price: formData.get("price"),
+        isRegularInvestment: formData.get("isRegularInvestment") === "on",
       };
-      data.investmentDetails = investmentDetails;
-      delete data.assetName;
-      delete data.investmentCurrency;
-      delete data.isRegularInvestment;
-      delete data.category;
-    } else {
-      delete data.assetName;
-      delete data.investmentCurrency;
-      delete data.isRegularInvestment;
+      // 因為投資類型沒有一般分類，將其歸類為 investmentDetails 中的類別
+      data.category = formData.get("investmentCurrency");
     }
-    data.isRecurring = data.isRecurring === "on";
+    const id = addTransactionForm.dataset.id;
+    const method = id ? "PUT" : "POST";
+    const url = id ? `/api/transactions/${id}` : "/api/transactions";
     try {
-      const response = await fetch("/api/transactions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
       const result = await response.json();
       if (result.success) {
-        if (addTransactionMessage) {
-          addTransactionMessage.textContent = "新增交易成功！";
-          addTransactionMessage.style.color = "green";
-        }
-        addTransactionForm.reset();
-        updateCategoryOptions();
-        if (document.getElementById("dashboard")) {
-          renderDashboard();
-        }
+        addTransactionMessage.textContent = id
+          ? "交易記錄更新成功！"
+          : "交易新增成功！";
+        addTransactionMessage.classList.remove("error");
+        addTransactionMessage.classList.add("success");
+        setTimeout(() => {
+          window.location.href = "/history";
+        }, 1500);
       } else {
-        if (addTransactionMessage) {
-          addTransactionMessage.textContent = "新增交易失敗：" + result.error;
-          addTransactionMessage.style.color = "red";
-        }
+        addTransactionMessage.textContent =
+          result.error || "新增交易失敗，請稍後再試。";
+        addTransactionMessage.classList.remove("success");
+        addTransactionMessage.classList.add("error");
       }
     } catch (ex) {
-      if (addTransactionMessage) {
-        addTransactionMessage.textContent = "新增交易失敗，請稍後再試。";
-        addTransactionMessage.style.color = "red";
-      }
-      console.error("發生錯誤:", ex);
+      addTransactionMessage.textContent = "新增交易失敗，請檢查網路連線。";
+      addTransactionMessage.classList.remove("success");
+      addTransactionMessage.classList.add("error");
     }
+    addTransactionMessage.style.display = "block";
   });
-}
-
-async function renderHistoryPage() {
-  const tableBody = document.getElementById("transactionTableBody");
-  if (!tableBody) {
-    console.error(
-      "錯誤：未找到 transactionTableBody 元素！請檢查您的 history.ejs 檔案。"
-    );
-    return;
-  }
-
-  try {
-    const response = await fetch("/api/dashboard");
-    const result = await response.json();
-    if (result.success) {
-      const transactions = result.data.transactions;
-      let tableRows = "";
-      if (transactions.length === 0) {
-        tableRows = '<tr><td colspan="9">目前沒有任何交易紀錄。</td></tr>';
-      } else {
-        tableRows = transactions
-          .map((t) => {
-            // 處理金額、說明/標的、數量、價格、是否固定等顯示內容
-            let amountDisplay = `NT$${t.amount.toLocaleString()}`;
-            let categoryDisplay = t.category || "";
-            let descriptionDisplay = t.description || "";
-            let quantityDisplay = "";
-            let priceDisplay = "";
-            let isRecurringDisplay = t.isRecurring ? "是" : "否";
-
-            if (t.type === "investment") {
-              try {
-                const details = t.investment_details
-                  ? JSON.parse(t.investment_details)
-                  : {};
-
-                // 更新投資交易的顯示內容
-                categoryDisplay = details.category || "投資";
-                descriptionDisplay = details.assetName || "";
-                quantityDisplay = details.quantity
-                  ? details.quantity.toLocaleString()
-                  : "";
-                priceDisplay = details.price
-                  ? details.price.toLocaleString()
-                  : "";
-              } catch (e) {
-                console.error("解析 investment_details 失敗:", e);
-              }
-            } else if (t.type === "expense") {
-              amountDisplay = `-NT$${t.amount.toLocaleString()}`;
+  const urlParams = new URLSearchParams(window.location.search);
+  const transactionId = urlParams.get("id");
+  if (transactionId) {
+    document.querySelector(".transaction-form-section h2").textContent =
+      "編輯交易";
+    addTransactionForm.dataset.id = transactionId;
+    async function loadTransactionData() {
+      try {
+        const response = await fetch(`/api/transactions/${transactionId}`);
+        const result = await response.json();
+        if (result.success && result.data) {
+          const t = result.data;
+          document.getElementById("type").value = t.type;
+          updateCategoryOptions();
+          document.getElementById("category").value = t.category;
+          document.getElementById("amount").value = t.amount;
+          document.getElementById("date").value = t.date.split("T")[0];
+          document.getElementById("description").value = t.description;
+          document.getElementById("isRecurring").checked = t.isRecurring;
+          if (t.type === "investment") {
+            const details =
+              typeof t.investment_details === "string"
+                ? JSON.parse(t.investment_details)
+                : t.investment_details;
+            if (details) {
+              document.getElementById("assetName").value = details.assetName;
+              document.getElementById("investmentCurrency").value =
+                details.investmentCurrency;
+              document.getElementById("quantity").value = details.quantity;
+              document.getElementById("price").value = details.price;
+              document.getElementById("isRegularInvestment").checked =
+                details.isRegularInvestment;
             }
-
-            return `
+          }
+        } else {
+          console.error("Failed to load transaction for editing:", result.error);
+        }
+      } catch (ex) {
+        console.error("Error loading transaction data:", ex);
+      }
+    }
+    loadTransactionData();
+  }
+}
+if (historyPage) {
+  const filterTypeSelect = document.getElementById("filterType");
+  const filterCategorySelect = document.getElementById("filterCategory");
+  const startDateInput = document.getElementById("startDate");
+  const endDateInput = document.getElementById("endDate");
+  const applyFiltersBtn = document.getElementById("applyFilters");
+  if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener("click", () => {
+      renderTransactionHistory();
+    });
+  }
+  filterTypeSelect.addEventListener("change", updateFilterCategoryOptions);
+  function updateFilterCategoryOptions() {
+    const selectedType = filterTypeSelect.value;
+    const categoryOptions = categories[selectedType] || [];
+    filterCategorySelect.innerHTML = '<option value="all">所有</option>';
+    if (selectedType !== "all") {
+      categoryOptions.forEach((category) => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        filterCategorySelect.appendChild(option);
+      });
+    }
+  }
+  updateFilterCategoryOptions();
+  async function deleteTransaction(id) {
+    if (!confirm("確定要刪除這筆交易記錄嗎？")) {
+      return;
+    }
+    try {
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: "DELETE",
+      });
+      const result = await response.json();
+      if (result.success) {
+        alert("刪除成功！");
+        renderTransactionHistory();
+      } else {
+        alert("刪除失敗：" + (result.error || "未知錯誤"));
+      }
+    } catch (ex) {
+      alert("刪除失敗，請檢查網路連線。");
+    }
+  }
+  async function renderTransactionHistory() {
+    const type = filterTypeSelect.value;
+    const category = filterCategorySelect.value;
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    const params = new URLSearchParams();
+    if (type && type !== "all") params.append("type", type);
+    if (category && category !== "all") params.append("category", category);
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+    const url = `/api/history?${params.toString()}`;
+    try {
+      const response = await fetch(url);
+      const result = await response.json();
+      const tableBody = historyTableBodyEl;
+      if (result.success) {
+        const transactions = result.data.transactions;
+        let tableRows = "";
+        if (transactions.length === 0) {
+          if (noTransactionsMessageEl)
+            noTransactionsMessageEl.style.display = "block";
+        } else {
+          if (noTransactionsMessageEl)
+            noTransactionsMessageEl.style.display = "none";
+          tableRows = transactions
+            .map((t) => {
+              const date = t.date.split("T")[0];
+              const categoryDisplay =
+                t.type === "investment"
+                  ? "投資"
+                  : t.category || "未分類";
+              let descriptionDisplay = t.description || "";
+              let quantityDisplay = "";
+              let priceDisplay = "";
+              let amountDisplay = "";
+              const isRecurringDisplay = t.isRecurring ? "是" : "否";
+              if (t.type === "investment") {
+                try {
+                  let details =
+                    typeof t.investment_details === "string"
+                      ? JSON.parse(t.investment_details)
+                      : t.investment_details;
+                  descriptionDisplay = details?.assetName || "未知標的";
+                  quantityDisplay = details.quantity
+                    ? details.quantity.toLocaleString()
+                    : "";
+                  priceDisplay = details.price
+                    ? details.price.toLocaleString()
+                    : "";
+                } catch (e) {
+                  console.error("解析 investment_details 失敗:", e);
+                }
+              } else if (t.type === "expense") {
+                amountDisplay = `-NT$${t.amount.toLocaleString()}`;
+              } else {
+                amountDisplay = `+NT$${t.amount.toLocaleString()}`;
+              }
+              return `
               <tr>
-                <td>${t.date}</td>
+                <td>${date}</td>
                 <td>${t.type}</td>
                 <td>${categoryDisplay}</td>
                 <td>${descriptionDisplay}</td>
@@ -418,28 +525,80 @@ async function renderHistoryPage() {
                 <td>${amountDisplay}</td>
                 <td>${isRecurringDisplay}</td>
                 <td>
-                  <button class="edit-btn" data-id="${t.id}">編輯</button>
+                  <a href="/edit-transaction?id=${t.id}" class="edit-btn">編輯</a>
                   <button class="delete-btn" data-id="${t.id}">刪除</button>
                 </td>
               </tr>
             `;
-          })
-          .join("");
+            })
+            .join("");
+        }
+        tableBody.innerHTML = tableRows;
+        document.querySelectorAll(".delete-btn").forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const id = e.target.dataset.id;
+            deleteTransaction(id);
+          });
+        });
+      } else {
+        console.error("Failed to fetch history data:", result.error);
+        tableBody.innerHTML = '<tr><td colspan="9">載入交易紀錄失敗。</td></tr>';
       }
-      tableBody.innerHTML = tableRows;
-    } else {
-      console.error("Failed to fetch history data:", result.error);
+    } catch (ex) {
+      console.error("Error fetching history data:", ex);
       tableBody.innerHTML = '<tr><td colspan="9">載入交易紀錄失敗。</td></tr>';
     }
-  } catch (ex) {
-    console.error("Error fetching history data:", ex);
-    tableBody.innerHTML = '<tr><td colspan="9">載入交易紀錄失敗。</td></tr>';
+  }
+  renderTransactionHistory();
+}
+// 判斷是否為新增或編輯頁面
+if (document.getElementById("add-transaction")) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const transactionId = urlParams.get("id");
+  if (transactionId) {
+    document.querySelector("#add-transaction h2").textContent = "編輯交易";
+    addTransactionForm.dataset.id = transactionId;
+    async function loadTransactionData() {
+      try {
+        const response = await fetch(`/api/transactions/${transactionId}`);
+        const result = await response.json();
+        if (result.success && result.data) {
+          const t = result.data;
+          document.getElementById("type").value = t.type;
+          updateCategoryOptions();
+          document.getElementById("category").value = t.category;
+          document.getElementById("amount").value = t.amount;
+          document.getElementById("date").value = t.date.split("T")[0];
+          document.getElementById("description").value = t.description || "";
+          document.getElementById("isRecurring").checked = t.isRecurring;
+          if (t.type === "investment") {
+            const details =
+              typeof t.investment_details === "string"
+                ? JSON.parse(t.investment_details)
+                : t.investment_details;
+            if (details) {
+              document.getElementById("assetName").value = details.assetName || "";
+              document.getElementById("investmentCurrency").value =
+                details.investmentCurrency || "TWD";
+              document.getElementById("quantity").value = details.quantity || "";
+              document.getElementById("price").value = details.price || "";
+              document.getElementById("isRegularInvestment").checked =
+                details.isRegularInvestment;
+            }
+          }
+        } else {
+          console.error("Failed to load transaction for editing:", result.error);
+        }
+      } catch (ex) {
+        console.error("Error loading transaction data:", ex);
+      }
+    }
+    loadTransactionData();
   }
 }
-
 if (document.getElementById("dashboard")) {
   renderDashboard();
 }
 if (document.getElementById("history")) {
-  renderHistoryPage();
+  renderTransactionHistory();
 }

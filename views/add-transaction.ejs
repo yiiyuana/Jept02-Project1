@@ -56,6 +56,18 @@
           />
           <label for="isRegularInvestment">是否為定期定額</label>
         </div>
+        <div class="form-group investment-quantity-price">
+          <label for="quantity">數量 (選填)：</label>
+          <input
+            type="number"
+            id="quantity"
+            name="quantity"
+            step="any"
+            min="0"
+          />
+          <label for="price">單價 (選填)：</label>
+          <input type="number" id="price" name="price" step="any" min="0" />
+        </div>
       </div>
       <div class="form-group checkbox-group">
         <input type="checkbox" id="isRecurring" name="isRecurring" />
@@ -63,10 +75,10 @@
       </div>
       <div class="form-group">
         <label for="description">說明 (選填)：</label>
-        <textarea id="description" name="description" rows="3"></textarea>
+        <textarea id="description" name="description"></textarea>
       </div>
-      <button type="submit">新增</button>
-      <p id="addTransactionMessage" class="message"></p>
+      <button type="submit">確認送出</button>
+      <div id="addTransactionMessage" class="message"></div>
     </form>
   </section>
 </section>

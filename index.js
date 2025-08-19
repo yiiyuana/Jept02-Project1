@@ -1,4 +1,4 @@
-// index.js (移除負債管理功能後的版本)
+// index.js
 import express from "express";
 import "dotenv/config";
 import db from "./utils/connect-mysql.js";
@@ -56,6 +56,12 @@ app.get("/history", async (req, res) => {
   res.render("history", { title: "交易記錄" });
 });
 
+// 編輯交易頁面
+app.get("/edit-transaction", async (req, res) => {
+  res.locals.pageName = "add-transaction";
+  res.render("add-transaction", { title: "編輯交易" });
+});
+
 // API 路由 - 取得儀表板數據
 app.get("/api/dashboard", async (req, res) => {
   const sql = "SELECT * FROM transactions ORDER BY date DESC, id DESC";
@@ -65,6 +71,57 @@ app.get("/api/dashboard", async (req, res) => {
       transactions: rows,
     };
     res.json({ success: true, data });
+  } catch (ex) {
+    res.json({ success: false, error: ex.message });
+  }
+});
+
+// API 路由 - 取得所有交易記錄 (可篩選)
+app.get("/api/history", async (req, res) => {
+  const { type, category, startDate, endDate } = req.query;
+  let sql = "SELECT * FROM transactions WHERE 1=1";
+  const params = [];
+
+  if (type && type !== "all") {
+    sql += " AND type = ?";
+    params.push(type);
+  }
+  if (category && category !== "all") {
+    sql += " AND category = ?";
+    params.push(category);
+  }
+  if (startDate) {
+    sql += " AND date >= ?";
+    params.push(startDate);
+  }
+  if (endDate) {
+    sql += " AND date <= ?";
+    params.push(endDate);
+  }
+  sql += " ORDER BY date DESC, id DESC";
+
+  try {
+    const [rows] = await db.query(sql, params);
+    const data = {
+      transactions: rows,
+    };
+    res.json({ success: true, data });
+  } catch (ex) {
+    res.json({ success: false, error: ex.message });
+  }
+});
+
+// API 路由 - 取得單一交易
+app.get("/api/transactions/:id", async (req, res) => {
+  const { id } = req.params;
+  const sql = "SELECT * FROM transactions WHERE id = ?";
+  try {
+    const [rows] = await db.query(sql, [id]);
+    if (rows.length > 0) {
+      res.json({ success: true, data: rows[0] });
+    } else {
+      res.json({ success: false, error: "交易記錄不存在" });
+    }
   } catch (ex) {
     res.json({ success: false, error: ex.message });
   }
@@ -95,24 +152,74 @@ app.post("/api/transactions", async (req, res) => {
   ];
 
   if (type === "investment" && investmentDetails) {
-    values[1] = investmentDetails.category;
+    values[1] = investmentDetails.investmentCurrency;
   }
 
   try {
     const [result] = await db.query(sql, values);
-    res.json({ success: true, newId: result.insertId });
+    res.json({ success: true, insertId: result.insertId });
   } catch (ex) {
-    console.error("Error inserting transaction:", ex);
-    res.json({ success: false, error: "交易新增失敗。" });
+    res.json({ success: false, error: ex.message });
   }
 });
 
-// 404 頁面處理
-app.use((req, res) => {
-  res.status(404).send(`<h2>找不到頁面</h2>`);
+// API 路由 - 更新交易
+app.put("/api/transactions/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    type,
+    category,
+    amount,
+    date,
+    description,
+    isRecurring,
+    investmentDetails,
+  } = req.body;
+  let sql =
+    "UPDATE transactions SET type=?, category=?, amount=?, date=?, description=?, isRecurring=?, investment_details=? WHERE id=?";
+  let values = [
+    type,
+    category,
+    amount,
+    date,
+    description,
+    isRecurring ? 1 : 0,
+    investmentDetails ? JSON.stringify(investmentDetails) : null,
+    id,
+  ];
+  if (type === "investment" && investmentDetails) {
+    values[1] = investmentDetails.investmentCurrency;
+  }
+  try {
+    const [result] = await db.query(sql, values);
+    if (result.affectedRows > 0) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, error: "交易記錄不存在或沒有改變" });
+    }
+  } catch (ex) {
+    res.json({ success: false, error: ex.message });
+  }
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`伺服器啟動於 http://localhost:${port}`);
+// API 路由 - 刪除交易
+app.delete("/api/transactions/:id", async (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM transactions WHERE id = ?";
+  try {
+    const [result] = await db.query(sql, [id]);
+    if (result.affectedRows > 0) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, error: "交易記錄不存在或已被刪除" });
+    }
+  } catch (ex) {
+    res.json({ success: false, error: ex.message });
+  }
+});
+
+// 啟動伺服器
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`伺服器正在 http://localhost:${PORT} 運作...`);
 });

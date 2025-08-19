@@ -15,28 +15,15 @@
     <header>
       <h1>個人收支管理小幫手</h1>
       <nav>
-        <a
-          href="/"
-          class="tab-button <%= pageName === 'dashboard' ? 'active' : '' %>"
-          >儀表板</a
-        >
-        <a
-          href="/add-transaction"
-          class="tab-button <%= pageName === 'add-transaction' ? 'active' : '' %>"
-          >新增交易</a
-        >
-        <a
-          href="/history"
-          class="tab-button <%= pageName === 'history' ? 'active' : '' %>"
-          >交易紀錄</a
-        >
+        <a href="/" class="tab-button <%= pageName === 'dashboard' ? 'active' : '' %>" >儀表板</a>
+        <a href="/add-transaction" class="tab-button <%= pageName === 'add-transaction' ? 'active' : '' %>" >新增交易</a>
+        <a href="/history" class="tab-button <%= pageName === 'history' ? 'active' : '' %>" >交易紀錄</a>
 
-        <a href="#" onclick="alert('登出功能待實作')">登出</a>
+        <a href="#">登出</a>
       </nav>
     </header>
 
     <main><%- body %></main>
-
-    <script defer src="/main.js"></script>
+    <script src="/main.js"></script>
   </body>
 </html>
