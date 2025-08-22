@@ -174,7 +174,7 @@ function renderRecentTransactions(transactions) {
           : `+${t.amount.toLocaleString()}`;
       return `
  <div class="transaction-item">
- <span>${t.date}</span>
+ <span>${t.date.split("T")[0]}</span>
  <span>${t.category}</span>
  <span class="${t.type}">${amountDisplay}</span>
  <span>${t.description || ""}</span>
@@ -188,7 +188,8 @@ function renderInvestmentPortfolioTable(portfolio) {
   if (!portfolioTableBodyEl) return;
   const portfolioAssets = Object.keys(portfolio);
   if (portfolioAssets.length === 0) {
-    portfolioTableBodyEl.innerHTML = '<tr><td colspan="4">目前沒有投資交易</td></tr>';
+    portfolioTableBodyEl.innerHTML =
+      '<tr><td colspan="4">目前沒有投資交易</td></tr>';
     return;
   }
   const tableRows = portfolioAssets
@@ -247,7 +248,9 @@ function renderExpenseChart(data) {
   });
 }
 function renderInvestmentPortfolioChart(data) {
-  const ctx = document.getElementById("investmentPortfolioChart").getContext("2d");
+  const ctx = document
+    .getElementById("investmentPortfolioChart")
+    .getContext("2d");
   if (investmentPortfolioChartInstance) {
     investmentPortfolioChartInstance.destroy();
   }
@@ -310,6 +313,17 @@ function switchChart(direction) {
   charts[currentChartIndex].classList.add("active-chart");
 }
 if (addTransactionForm) {
+  // 將日期輸入欄位預設為今天的日期，但編輯交易時不更動
+  const dateInput = document.getElementById("date");
+  const isEditing = addTransactionForm.dataset.id;
+  if (dateInput && !isEditing) {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    dateInput.value = `${year}-${month}-${day}`;
+  }
+
   typeSelect.addEventListener("change", updateCategoryOptions);
   updateCategoryOptions();
   addTransactionForm.addEventListener("submit", async (e) => {
@@ -403,7 +417,10 @@ if (addTransactionForm) {
             }
           }
         } else {
-          console.error("Failed to load transaction for editing:", result.error);
+          console.error(
+            "Failed to load transaction for editing:",
+            result.error
+          );
         }
       } catch (ex) {
         console.error("Error loading transaction data:", ex);
@@ -485,9 +502,7 @@ if (historyPage) {
             .map((t) => {
               const date = t.date.split("T")[0];
               const categoryDisplay =
-                t.type === "investment"
-                  ? "投資"
-                  : t.category || "未分類";
+                t.type === "investment" ? "投資" : t.category || "未分類";
               let descriptionDisplay = t.description || "";
               let quantityDisplay = "";
               let priceDisplay = "";
@@ -545,48 +560,61 @@ if (historyPage) {
             modal.style.display = "flex";
             modalMessage.style.display = "none";
             try {
-                const response = await fetch(`/api/transactions/${id}`);
-                const result = await response.json();
-                if (result.success && result.data) {
-                    const t = result.data;
-                    document.getElementById("editTransactionId").value = t.id;
-                    document.getElementById("editType").value = t.type;
+              const response = await fetch(`/api/transactions/${id}`);
+              const result = await response.json();
+              if (result.success && result.data) {
+                const t = result.data;
+                document.getElementById("editTransactionId").value = t.id;
+                document.getElementById("editType").value = t.type;
 
-                    const categoryOptions = categories[t.type] || [];
-                    const editCategorySelect = document.getElementById("editCategory");
-                    editCategorySelect.innerHTML = '';
-                    categoryOptions.forEach(cat => {
-                        const option = document.createElement("option");
-                        option.value = cat;
-                        option.textContent = cat;
-                        editCategorySelect.appendChild(option);
-                    });
-                    document.getElementById("editCategory").value = t.category;
-                    
-                    document.getElementById("editAmount").value = t.amount;
-                    document.getElementById("editDate").value = t.date.split("T")[0];
-                    document.getElementById("editDescription").value = t.description;
-                    document.getElementById("editIsRecurring").checked = t.isRecurring;
+                const categoryOptions = categories[t.type] || [];
+                const editCategorySelect =
+                  document.getElementById("editCategory");
+                editCategorySelect.innerHTML = "";
+                categoryOptions.forEach((cat) => {
+                  const option = document.createElement("option");
+                  option.value = cat;
+                  option.textContent = cat;
+                  editCategorySelect.appendChild(option);
+                });
+                document.getElementById("editCategory").value = t.category;
 
-                    const investmentFields = document.getElementById("editInvestmentFields");
-                    if (t.type === "investment") {
-                        investmentFields.style.display = "block";
-                        const details = (typeof t.investment_details === 'string') ? JSON.parse(t.investment_details) : t.investment_details;
-                        if (details) {
-                            document.getElementById("editAssetName").value = details.assetName;
-                            document.getElementById("editInvestmentCurrency").value = details.investmentCurrency;
-                            document.getElementById("editQuantity").value = details.quantity;
-                            document.getElementById("editPrice").value = details.price;
-                            document.getElementById("editIsRegularInvestment").checked = details.isRegularInvestment;
-                        }
-                    } else {
-                        investmentFields.style.display = "none";
-                    }
+                document.getElementById("editAmount").value = t.amount;
+                document.getElementById("editDate").value =
+                  t.date.split("T")[0];
+                document.getElementById("editDescription").value =
+                  t.description;
+                document.getElementById("editIsRecurring").checked =
+                  t.isRecurring;
+
+                const investmentFields = document.getElementById(
+                  "editInvestmentFields"
+                );
+                if (t.type === "investment") {
+                  investmentFields.style.display = "block";
+                  const details =
+                    typeof t.investment_details === "string"
+                      ? JSON.parse(t.investment_details)
+                      : t.investment_details;
+                  if (details) {
+                    document.getElementById("editAssetName").value =
+                      details.assetName;
+                    document.getElementById("editInvestmentCurrency").value =
+                      details.investmentCurrency;
+                    document.getElementById("editQuantity").value =
+                      details.quantity;
+                    document.getElementById("editPrice").value = details.price;
+                    document.getElementById("editIsRegularInvestment").checked =
+                      details.isRegularInvestment;
+                  }
                 } else {
-                    alert("載入交易資料失敗：" + (result.error || "未知錯誤"));
+                  investmentFields.style.display = "none";
                 }
+              } else {
+                alert("載入交易資料失敗：" + (result.error || "未知錯誤"));
+              }
             } catch (ex) {
-                alert("載入交易資料失敗，請檢查網路連線。");
+              alert("載入交易資料失敗，請檢查網路連線。");
             }
           });
         });
@@ -599,7 +627,8 @@ if (historyPage) {
         });
       } else {
         console.error("Failed to fetch history data:", result.error);
-        tableBody.innerHTML = '<tr><td colspan="9">載入交易紀錄失敗。</td></tr>';
+        tableBody.innerHTML =
+          '<tr><td colspan="9">載入交易紀錄失敗。</td></tr>';
       }
     } catch (ex) {
       console.error("Error fetching history data:", ex);
@@ -615,73 +644,73 @@ if (historyPage) {
   const editTransactionForm = document.getElementById("editTransactionForm");
 
   if (modal && closeButton && cancelButton && editTransactionForm) {
-      closeButton.addEventListener("click", () => {
-          modal.style.display = "none";
-      });
+    closeButton.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
 
-      cancelButton.addEventListener("click", () => {
-          modal.style.display = "none";
-      });
+    cancelButton.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
 
-      window.addEventListener("click", (event) => {
-          if (event.target === modal) {
-              modal.style.display = "none";
-          }
-      });
+    window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
 
-      editTransactionForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const id = document.getElementById("editTransactionId").value;
-          const formData = new FormData(editTransactionForm);
-          const data = {
-              type: formData.get("type"),
-              category: formData.get("category"),
-              amount: formData.get("amount"),
-              date: formData.get("date"),
-              description: formData.get("description"),
-              isRecurring: formData.get("isRecurring") === "on",
-          };
+    editTransactionForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("editTransactionId").value;
+      const formData = new FormData(editTransactionForm);
+      const data = {
+        type: formData.get("type"),
+        category: formData.get("category"),
+        amount: formData.get("amount"),
+        date: formData.get("date"),
+        description: formData.get("description"),
+        isRecurring: formData.get("isRecurring") === "on",
+      };
 
-          if (data.type === "investment") {
-            data.investmentDetails = {
-                assetName: formData.get("assetName"),
-                investmentCurrency: formData.get("investmentCurrency"),
-                quantity: formData.get("quantity"),
-                price: formData.get("price"),
-                isRegularInvestment: formData.get("isRegularInvestment") === "on",
-            };
-            data.category = formData.get("investmentCurrency");
-          }
+      if (data.type === "investment") {
+        data.investmentDetails = {
+          assetName: formData.get("assetName"),
+          investmentCurrency: formData.get("investmentCurrency"),
+          quantity: formData.get("quantity"),
+          price: formData.get("price"),
+          isRegularInvestment: formData.get("isRegularInvestment") === "on",
+        };
+        data.category = formData.get("investmentCurrency");
+      }
 
-          const modalMessage = document.getElementById("editModalMessage");
-          try {
-              const response = await fetch(`/api/transactions/${id}`, {
-                  method: "PUT",
-                  headers: {
-                      "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(data),
-              });
-              const result = await response.json();
-              if (result.success) {
-                  modalMessage.textContent = "交易更新成功！";
-                  modalMessage.classList.remove("error");
-                  modalMessage.classList.add("success");
-                  renderTransactionHistory();
-                  setTimeout(() => {
-                      modal.style.display = "none";
-                  }, 1500);
-              } else {
-                  modalMessage.textContent = result.error || "更新失敗，請稍後再試。";
-                  modalMessage.classList.remove("success");
-                  modalMessage.classList.add("error");
-              }
-          } catch (ex) {
-              modalMessage.textContent = "更新失敗，請檢查網路連線。";
-              modalMessage.classList.remove("success");
-              modalMessage.classList.add("error");
-          }
-          modalMessage.style.display = "block";
-      });
+      const modalMessage = document.getElementById("editModalMessage");
+      try {
+        const response = await fetch(`/api/transactions/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        const result = await response.json();
+        if (result.success) {
+          modalMessage.textContent = "交易更新成功！";
+          modalMessage.classList.remove("error");
+          modalMessage.classList.add("success");
+          renderTransactionHistory();
+          setTimeout(() => {
+            modal.style.display = "none";
+          }, 1500);
+        } else {
+          modalMessage.textContent = result.error || "更新失敗，請稍後再試。";
+          modalMessage.classList.remove("success");
+          modalMessage.classList.add("error");
+        }
+      } catch (ex) {
+        modalMessage.textContent = "更新失敗，請檢查網路連線。";
+        modalMessage.classList.remove("success");
+        modalMessage.classList.add("error");
+      }
+      modalMessage.style.display = "block";
+    });
   }
 }
